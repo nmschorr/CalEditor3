@@ -150,10 +150,16 @@ public class SFCALutil {
 	//----new Method ===============================================================//
 	static String replaceSigns(String theInputStr) {
 		String answerst =theInputStr;
+		String tsign = "";
 		verboseOut("inside replaceSigns");		
 		HashMap <String, String> theHashmap = makemyhash();
 		
-		String tsign = theInputStr.substring(23,25);
+		String aspace = theInputStr.substring(23,24);
+		if (aspace.equals(" ")) {
+			 tsign = theInputStr.substring(24,26);
+		}
+			 else tsign = theInputStr.substring(23,25);
+			 
 		String theMoon = theInputStr.substring(8,19);
 		if ((theMoon.contains("New Moon")) || (theMoon.contains("Full Moon")) ) {
 			answerst = theInputStr.replace(tsign, theHashmap.get(tsign));
