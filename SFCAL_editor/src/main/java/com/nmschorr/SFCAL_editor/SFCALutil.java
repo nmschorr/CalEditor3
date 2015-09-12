@@ -60,7 +60,7 @@ public class SFCALutil {
 					}
 					else { 	utilLINE1 = utilLINE2; }
 
-					if ( utilLINE1.substring(0,6).equals("DTSTAR") )   {   // add DTEND line, chg  start line ending to 5Z to add 5 secs	 			
+					if ( utilLINE1.substring(0,6).equals("DTSTAR") )   {   // add DTEND line, chg  start line ending to 1Z to add 5 secs	 			
 						newDTENDline = createDTEND(utilLINE1);
 						utilLINE2 = fixDTSTART(utilLINE1);
 						addDTEND = true;
@@ -87,7 +87,7 @@ public class SFCALutil {
 	static String createDTEND(String utline) {
 		String partialEND ="";
 		String newDTENDstr = "";  
-		partialEND = utline.substring(8,22) + "5Z";
+		partialEND = utline.substring(8,22) + "1Z";
 		newDTENDstr ="DTEND:" + partialEND;					
 		verboseOut("DTEND: new line is " + newDTENDstr);
 		return newDTENDstr;	
@@ -95,7 +95,7 @@ public class SFCALutil {
 	
 	static String fixDTSTART(String uline) {
 		String newstr = "";  		 
-		String partialEND = uline.substring(8,22) + "5Z";
+		String partialEND = uline.substring(8,22) + "1Z";
 		newstr ="DTSTART:" + partialEND;					
 		verboseOut("DTSTART: new line is " + newstr);
 		return newstr;
