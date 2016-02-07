@@ -151,24 +151,44 @@ public class SFCALutil {
 	static String replaceSigns(String theInputStr) {
 		String answerst =theInputStr;
 		String tsign = "";
+		String aspace = "";
+		String theMoon = "";
+		boolean theProblem = false;
 		verboseOut("inside replaceSigns");		
 		HashMap <String, String> theHashmap = makemyhash();
-		
-		String aspace = theInputStr.substring(23,24);
-		if (aspace.equals(" ")) {
-			 tsign = theInputStr.substring(24,26);
+
+		String ShortSpace = theInputStr.substring(21,22);
+		if (ShortSpace.equals(" ")) {
+			 theProblem = true;
 		}
-			 else tsign = theInputStr.substring(23,25);
-			 
-		String theMoon = theInputStr.substring(8,19);
+		
+		if (theProblem == false) {     // continue as usual
+			aspace = theInputStr.substring(23,24);
+			if (aspace.equals(" ")) {
+				 tsign = theInputStr.substring(24,26);
+			}
+				 else tsign = theInputStr.substring(23,25);
+		}
+		
+		if (theProblem == true) {     // scoot everything over one space
+		
+			aspace = theInputStr.substring(22,23);
+			if (aspace.equals(" ")) {
+				 tsign = theInputStr.substring(23,25);
+			}
+				 else tsign = theInputStr.substring(22,24);
+		}
+				 
+		theMoon = theInputStr.substring(8,19);
 		if ((theMoon.contains("New Moon")) || (theMoon.contains("Full Moon")) ) {
 			answerst = theInputStr.replace(tsign, theHashmap.get(tsign));
-		}
+			}
 		else {
 			for (String key : theHashmap.keySet()) {       // check for other possibilities
 			   answerst = checkForSigns(theInputStr, key, theHashmap.get(key));
-		}   
+				}   
 			}
+		
 		verboseOut("val of answerst is: " + answerst);
 		return answerst;
 	}	
