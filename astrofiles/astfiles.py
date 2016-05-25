@@ -6,16 +6,15 @@ Created on Nov 22, 2015, May 25, 2016
 ## old is nfi, new is aaf
 ## to do py2exe : use cygwin. cd to prj dir. run python command from there. it's in the path.
 
-import os
 
 
-os.system("Put  nfi files in C\:\\astin")
-
+import pymsgbox
+pymsgbox.confirm("Put nfi files in C:\\astin - new aaf files will be in C:\\astout", 'Welcome to Astrofiles',["Start Converting", 'Cancel'])
+#response = pymsgbox.prompt('What is your name?')
 
 
 #"Translate nfi files into aaf files\n")
-#"Put  nfi files in- C:\astin.")
-#"Your new aaf files will appear in this directory: C:\astout.")
+#"Put nfi files in C:\\astin - new aaf files will be in C:\\astout")
 #"Press the return key to start the program. Go to C:\astout when the program ends to find your files")
 
  
@@ -24,7 +23,8 @@ PYTHONDONTWRITEBYTECODE = True   #prevents bytecode .pyc files from being create
 import sys
 import datetime
 import astrs
-#import os, re
+import os
+#import re
 
 if __name__ == '__main__':   pass
 
@@ -59,7 +59,7 @@ def splitNfiFile(inFile):
     
     theInfile = cInputDIR +  DIR_SEP + inFile
     print "now the infile is: " + theInfile
-    
+   
     #target_FILE = open(FINAL_OUTFILE, 'w')  ## target_FILE is OPENED
     #fn = target_FILE.fileno()
  
@@ -70,6 +70,12 @@ def splitNfiFile(inFile):
     print "global_OUTDIR: " + global_OUTDIR +" global_INDIR_DONE: " + global_INDIR_DONE + " FINAL_OUTFILE: " + FINAL_OUTFILE + NLINE
    
     #print "file number of newfile is: " + fn
+                
+                
+                
+    fileexists = os.path.exists(theInfile)
+    if not fileexists :
+        pymsgbox.alert("ERROR!! No aaf files in C:\\astin", 'Astrofiles Aborted')
     
     theLines = open( theInfile ).read().splitlines()
     for myLine in theLines :
@@ -234,17 +240,26 @@ def writeOutFileContent(FINAL_OUTFILE,fname,lname,tdate,tm,tzone,tlat,tlong,tGen
 
 
 
+indirExists2 = os.path.exists(cInputDIR)
+    
+if indirExists2 is not True :
+    pymsgbox.alert("ERROR!! Directory C:\\astin not there!", "Astrofiles Aborted")
+    quit()
+
 
 
 astrs.printFrontMatter()
-astrs.chkFixDirs(global_OUTDIR)
+astrs.chkFixDirs(global_OUTDIR)  ## this is where alerts are
 
 locInFileList = astrs.getInFilePathList()
 print "local file list: " + str(locInFileList)
 
+mylength = locInFileList
+
 for f in locInFileList:
     splitNfiFile(f)
     #target_FILE.close()
+pymsgbox.alert("If program worked, new aaf files will be in C:\\astout", 'Astrofiles Finished')
 
 print NLINE + "end of program"
 

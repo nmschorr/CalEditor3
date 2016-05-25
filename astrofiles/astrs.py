@@ -17,6 +17,7 @@ import os
 #import re
 #import shutil
 import datetime
+import pymsgbox
 
 if __name__ == '__main__':   pass
 
@@ -50,9 +51,10 @@ def getGlobalEachFile():
     return ggEachFileList;
 
 def prtExitEarlyStatements():
-    print ccNLINE + "NO! nfi files not there. Program exiting early. "
+    print ccNLINE + "ERROR!! nfi files not there. Program exiting early. "
     print '  Please put C:\\astin\\filename.nfi there and start over.'
     print '  Can be any filename as long as it ends with \".nfi\"'
+    pymsgbox.alert("ERROR!! No files in C:\\astin", "Astrofiles Aborted")
 
 #2------------------- chkFixDirs() ----------------------------------
 ### check both dirs present; if inDirToChg not there, stop & give error  
@@ -64,12 +66,7 @@ def chkFixDirs(loc_outdir):
     
     if indirExists is True :
         print   ccNLINE +"inputdir pathexists. Continuing..."  
-    else :    ### not True
-        print "ERROR! inputdir not there.   Program exiting early. "
-        print '  Please put C:\\astin\\filename.nfi there and start over.'
-        print '  Can be any filename as long as it ends with \".nfi\"'
-        quit()
-        
+         
     if indirExists is True :
         if outdirExists is True :
             print ccNLINE + "outdirExists YES path exists boolean value: " + str(outdirExists)
@@ -87,11 +84,12 @@ def getInFilePathList():
     print    ccNLINE +"inside getInFilePathList(). storing vals to array"
     eachFileList = []
     eachFilePathList = []
+    
     for inputFile in os.listdir(ccInputDIR):
         if inputFile.endswith(".nfi"):
             eachFileList.append(inputFile);
             eachFilePathList.append(ccInputDIR + ccDirSEP + inputFile)
-    
+     
     setGlobalEachFile(eachFileList)
     print ccNLINE + "  now eachFileList: "
     for i in ggEachFileList :
