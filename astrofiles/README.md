@@ -1,14 +1,22 @@
-pyFileMove README.me
 Author:  Nancy Schorr
-Date:    12/9/2015
 
-This program uses Python. 
+Design concept:  Axel Becker
 
-It translates "nfi"-files into aaf files.
+Date: June 1, 2016
 
-astfiles.py is the main file that is run.  astrs.py is the function library.  setup.py is there to create the exe file. extra.txt is extra code and notes associated with the project.
+Runs on Windows 7 64-bit only. 
 
-The in directory is cInputDIR ='C:\\astin'     It must be there for the program to run. The nfi files go inside it.
+Unzip the zip file to anywhere you like.
 
-The results are put in the outdir at 'C:\\astout'. This is where you are sorting to, and it's created if it's not there.
+It creates a folder called "dist".
 
+Inside "dist" is a file called "astfiles.exe".
+
+Double click on astfiles.exe to run it.
+
+This program translates "nfi"-files into aaf files.
+
+
+You MUST put the nfi files to be converted into:  C:\\astin'    
+
+The results will show up in 'C:\\astout'. This is where you are sorting to, and it's created for you if it's not there.
