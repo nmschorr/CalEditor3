@@ -40,8 +40,7 @@ public class SFCALstandard extends SFCALstandardutil {
 		String[] arryOfInFiles = getflist(indirMAIN);	// create a list of names of those files	
 		int fileInDirCNT=0;
 		
-		//int arraysize = arryOfInFiles.length;
-	int arraysize = 1;
+		int arraysize = arryOfInFiles.length;
 
 		while (fileInDirCNT < arraysize) {  
 			String infileNM= arryOfInFiles[fileInDirCNT];
