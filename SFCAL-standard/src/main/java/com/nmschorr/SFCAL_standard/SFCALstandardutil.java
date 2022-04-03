@@ -77,6 +77,34 @@ public class SFCALstandardutil {
 							nwARRY.add(theDTENDline );
 						}
 					}
+					else if (cLINE.contains("Moon goes void")) {
+						cLINEtwo = "SUMMARY:Moon void of course";
+						int line_back_three = lineCOUNT - 3;
+						int line_back_two = lineCOUNT - 2;
+						System.out.println("------here's back three----");
+						System.out.println("------here's back three----");
+						String newARRYline = nwARRY.get(line_back_three);
+						System.out.println(newARRYline);
+						String anewline = fixDTSTART(newARRYline);
+						String new_DTEND_line = stdUtilCreateDTEND(newARRYline);
+						
+						nwARRY.set(line_back_three, anewline);
+						nwARRY.set(line_back_two, new_DTEND_line);
+					
+						
+						String check_one = nwARRY.get(line_back_three);
+						String ck_two = nwARRY.get(line_back_two);
+						System.out.println("checking ");
+						System.out.println(check_one);
+						System.out.println(ck_two);
+
+//						mockCT++;  // add extra line to count for extra DTEND string created
+//						addDTEND = true;
+
+						System.exit(0);
+
+						nwARRY.add(cLINEtwo );
+					}
 					else {
 						System.out.println("   writing ORIGINAL string to file         " + cLINE);
 						nwARRY.add(cLINE );
@@ -96,7 +124,23 @@ public class SFCALstandardutil {
 
 	}	// end of method
 
+	static String fixDTSTART(String uline) {
+		String newstr = "";  		 
+		String partialEND = uline.substring(8,22) + "1Z";
+		newstr ="DTSTART:" + partialEND;					
+		verboseOut("DTSTART: new line is " + newstr);
+		return newstr;
+	}
 
+	static String stdUtilCreateDTEND(String utline) {
+		String partialEND ="";
+		String newDTENDstr = "";  
+		partialEND = utline.substring(8,22) + "1Z";
+		newDTENDstr ="DTEND:" + partialEND;					
+		verboseOut("DTEND: new line is " + newDTENDstr);
+		return newDTENDstr;	
+	}
+	
 	static String fixDirRetro(String retroString) {
 		String charD = " D";  
 		String charR = " R";  // MUST have a space first
