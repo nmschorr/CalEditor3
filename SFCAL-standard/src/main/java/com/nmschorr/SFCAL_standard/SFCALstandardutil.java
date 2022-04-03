@@ -48,14 +48,20 @@ public class SFCALstandardutil {
 				System.out.println("myLINEct:  " + lineCOUNT);
 				cLINE = origFILEARRY.get(lineCOUNT);
 				cLINEtwo  =   StringUtils.chomp(cLINE);  // chomp is removing the Z
-				cLINE  =   cLINEtwo;
+				cLINE = chkForWeirdChar(cLINEtwo);
 				System.out.println("    char string is:         " + cLINE);
-		// the ifs start here
-		// begin the IFS			
+					// the if's start here
+					// begin the IFS			
 				if ( cLINE.contains(SUMstr)) {  /// if TR-TR only lines
 					cLINEtwo = fixSUMMARYsigns(cLINE, false) ;
 					nwARRY.add(cLINEtwo);
-				}										
+				}			
+				else if ( cLINE.contains("Full Moon") || cLINE.contains("New Moon")) {
+					cLINEtwo = replaceSigns(cLINE);
+					cLINE = cLINEtwo;
+					nwARRY.add(cLINE );
+				} 
+				
 				else if ( cLINE.contains(DEStr) || cLINE.startsWith(" "))   {  /// if TR-TR only lines
 						cLINEtwo = fixDESCRIPTION_line(cLINE) ;
 						nwARRY.add(cLINEtwo);
@@ -255,7 +261,7 @@ static HashMap<String, String>  makeNewhash() {
 
 	
 	// new method // --------------------------------------------------------------	 	
-static boolean checkLINEfunction(String theLocLine) {
+	static boolean checkLINEfunction(String theLocLine) {
 			boolean KG = true;
 			if   ((theLocLine.length() > 0 ) )   {
 
@@ -283,6 +289,63 @@ static boolean checkLINEfunction(String theLocLine) {
 			return KG;
 		}
 		
+	//----new Method ===============================================================//
+		static String replaceSigns(String theInputStr) {
+			String answerst =theInputStr;
+			String tsign = "";
+			String aspace = "";
+			String theMoon = "";
+			boolean theProblem = false;
+			verboseOut("inside replaceSigns");		
+			HashMap <String, String> theHashmap = makemyhash();
+
+			String ShortSpace = theInputStr.substring(21,22);
+			if (ShortSpace.equals(" ")) {
+				 theProblem = true;
+			}
+			
+			if (theProblem == false) {     // continue as usual
+				aspace = theInputStr.substring(23,24);
+				if (aspace.equals(" ")) {
+					 tsign = theInputStr.substring(24,26);
+				}
+					 else tsign = theInputStr.substring(23,25);
+			}
+			
+			if (theProblem == true) {     // scoot everything over one space
+			
+				aspace = theInputStr.substring(22,23);
+				if (aspace.equals(" ")) {
+					 tsign = theInputStr.substring(23,25);
+				}
+					 else tsign = theInputStr.substring(22,24);
+			}
+					 
+			theMoon = theInputStr.substring(8,19);
+			if ((theMoon.contains("New Moon")) || (theMoon.contains("Full Moon")) ) {
+				answerst = theInputStr.replace(tsign, theHashmap.get(tsign));
+				}
+			else {
+				for (String key : theHashmap.keySet()) {       // check for other possibilities
+				   answerst = checkForSigns(theInputStr, key, theHashmap.get(key));
+					}   
+				}
+			
+			verboseOut("val of answerst is: " + answerst);
+			return answerst;
+		}	
+
+		static String checkForSigns(String origLine, String theVal, String theRep) {
+			String theFixedLine = "";
+			verboseOut("inside checkForSigns checking val rep: "+theVal + theRep);		
+			if (origLine.contains(theVal))  {
+				theFixedLine = origLine.replace( theVal, theRep);  
+				out.println("---------FOUND sign CHAR ------------------The fixed line: " + theFixedLine);
+				return theFixedLine;
+			}
+			else return origLine;	
+		}
+
 		
 		// new method // --------------------------------------------------------------	 	
 		static HashMap<String, String>  makemyhash() {
