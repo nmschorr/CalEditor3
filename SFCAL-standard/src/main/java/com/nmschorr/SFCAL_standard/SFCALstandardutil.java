@@ -80,20 +80,22 @@ public class SFCALstandardutil {
 					}
 					else if (cLINE.contains("Moon goes void")) {
 						cLINEtwo = "SUMMARY:Moon void of course";
-						int line_back_three = lineCOUNT - 3;
-						int line_back_two = lineCOUNT - 2;
+						int newSIZE  =  nwARRY.size();
+
+						int back_three_count = newSIZE - 5;
+						int back_two_count = newSIZE - 4;
 						System.out.println("------here's back three----");
-						String newARRYline = nwARRY.get(line_back_three);
-						System.out.println(newARRYline);
-						String anewline = fixDTSTART(newARRYline);
-						String new_DTEND_line = stdUtilCreateDTEND(newARRYline);
+						String back_3_str = nwARRY.get(back_three_count);
+						System.out.println("old string: " + back_3_str);
+						String newDTSTART = fixDTSTART(back_3_str);
+						String new_DTEND_line = stdUtilCreateDTEND(back_3_str);
 						
-						nwARRY.set(line_back_three, anewline);
-						nwARRY.set(line_back_two, new_DTEND_line);
+						nwARRY.set(back_three_count, newDTSTART);
+						nwARRY.set(back_two_count, new_DTEND_line);
 						
 						nwARRY.add(cLINEtwo );
-						arraySIZE++;
-						mockCT++;  // add extra line to count for extra DTEND string created
+//						mockCT++;  // add extra line to count for extra DTEND string created
+						lineCOUNT++;
 						}
 
 					

@@ -174,7 +174,7 @@ public class SectionNew2 {
 // new method: ----------------------------------------------------------------
 	static boolean checkSUMMARYforToss(List<String> tinyList) {
 		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
-		out.println("\n\n" +"   starting over in checkForTossouts. The string is:  " + sl );
+		out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
 
 //		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
 //		{
@@ -191,7 +191,7 @@ public class SectionNew2 {
 		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
 			//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
 		{
-			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!!!  tossing: "+ sl);		
+			out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
 			return false;  // toss
 		}
 //
