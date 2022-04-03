@@ -32,10 +32,11 @@ public class SFCALstandardutil {
 		boolean tempboo = false;
 
 		G_VERBOSE = 1;
-
+		
 		try {
 			List<String> origFILEARRY  =   FileUtils.readLines(origFILE);
 			int arraySIZE  =  origFILEARRY.size();
+			int mockCT  =  0;
 			System.out.println("orig file size:  " +  arraySIZE   );			
 			System.out.println("----------------------------------%%%%%%%##### total lines: " +  origFILEARRY.size());
 			// get ics header lines in 1st-first four header lines of ics inFileName
@@ -82,7 +83,6 @@ public class SFCALstandardutil {
 						int line_back_three = lineCOUNT - 3;
 						int line_back_two = lineCOUNT - 2;
 						System.out.println("------here's back three----");
-						System.out.println("------here's back three----");
 						String newARRYline = nwARRY.get(line_back_three);
 						System.out.println(newARRYline);
 						String anewline = fixDTSTART(newARRYline);
@@ -90,21 +90,13 @@ public class SFCALstandardutil {
 						
 						nwARRY.set(line_back_three, anewline);
 						nwARRY.set(line_back_two, new_DTEND_line);
-					
 						
-						String check_one = nwARRY.get(line_back_three);
-						String ck_two = nwARRY.get(line_back_two);
-						System.out.println("checking ");
-						System.out.println(check_one);
-						System.out.println(ck_two);
-
-//						mockCT++;  // add extra line to count for extra DTEND string created
-//						addDTEND = true;
-
-						System.exit(0);
-
 						nwARRY.add(cLINEtwo );
-					}
+						arraySIZE++;
+						mockCT++;  // add extra line to count for extra DTEND string created
+						}
+
+					
 					else {
 						System.out.println("   writing ORIGINAL string to file         " + cLINE);
 						nwARRY.add(cLINE );

@@ -56,7 +56,7 @@ public class SFCALstandard extends SFCALstandardutil {
 				
 			generalStringFixing( inFILEstr, tOUTone);
 			
-			SectionNew2.sectionTask(tOUTone, tOUTtwo, finFILEnmWdir);
+			SectionNew.sectionTask(tOUTone, tOUTtwo, finFILEnmWdir);
 			
 			out.println("- datefilename is: " + finFILEnmWdir+"--------End of Loop------------NEW filename is: "+finFILEnmWdir);		
 			
