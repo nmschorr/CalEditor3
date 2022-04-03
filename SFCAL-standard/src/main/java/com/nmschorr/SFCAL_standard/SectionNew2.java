@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 //import static com.nmschorr.SFCAL_standard.*;
 
 
-public class SectionNew {
+public class SectionNew2 {
 
 
 
@@ -176,28 +176,31 @@ public class SectionNew {
 		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
 		out.println("\n\n" +"   starting over in checkForTossouts. The string is:  " + sl );
 
-		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
-		{
-			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!! tossing: "+ sl);		
-			return false;  // toss
-		}
-		else if ( (sl.contains("SUMMARY")) && (sl.contains("Moon enters")) )
-		{
-			out.println("==========    ===== !!!!! reg method Moon enters! ========== tossing: "+ sl);		
-			return false;  // toss
-		}
-		else if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
+//		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
+//		{
+//			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!! tossing: "+ sl);		
+//			return false;  // toss
+//		}
+//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Moon enters")) )
+//		{
+//			out.println("==========    ===== !!!!! reg method Moon enters! ========== tossing: "+ sl);		
+//			return false;  // toss
+//		}
+		
+		
+		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
+			//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
 		{
 			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!!!  tossing: "+ sl);		
 			return false;  // toss
 		}
-
-		else if ( (sl.contains("SUMMARY:Full")) || 
-				( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
-		{
-			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
-			return false;   //toss
-		}
+//
+//		else if ( (sl.contains("SUMMARY:Full")) || 
+//				( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
+//		{
+//			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
+//			return false;   //toss
+//		}
 		else  {
 			return true;
 		}

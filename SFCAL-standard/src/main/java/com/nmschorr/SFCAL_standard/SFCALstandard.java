@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 import static java.lang.System.out;
 import org.apache.commons.io.FileUtils;
-import com.nmschorr.SFCAL_standard.SectionNew;
+import com.nmschorr.SFCAL_standard.SectionNew2;
 
 /**
  * This class contains methods that remove extra calendar events from an ics calendar file.
@@ -56,7 +56,7 @@ public class SFCALstandard extends SFCALstandardutil {
 				
 			generalStringFixing( inFILEstr, tOUTone);
 			
-			SectionNew.sectionTask(tOUTone, tOUTtwo, finFILEnmWdir);
+			SectionNew2.sectionTask(tOUTone, tOUTtwo, finFILEnmWdir);
 			
 			out.println("- datefilename is: " + finFILEnmWdir+"--------End of Loop------------NEW filename is: "+finFILEnmWdir);		
 			
