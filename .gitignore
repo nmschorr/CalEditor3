@@ -1,0 +1,15 @@
+./*/target/
+.settings/
+./*/.gitignore
+./*/JunkNotes.txt
+/.classpath
+bad.out
+runm6.jar
+SFCAL-standard/target/
+SFCAL-standard/JunkNotes.txt
+SFCAL-standard/.settings/
+SFCAL-editor/.settings/
+SFCAL-personal/.settings/
+*/.settings/
+*/.settings
+
