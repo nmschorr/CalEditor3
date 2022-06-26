@@ -13,10 +13,10 @@ import org.apache.commons.lang.StringUtils;
 
 import static java.lang.System.out;
 //import static com.nmschorr.SFCAL_editor.SFCALeditor.verboseOut;
-import static com.nmschorr.SFCAL_standard.SFCALstandard.*;
+import static com.nmschorr.SFCAL_standard.SFCALstandardMain.*;
 
 	
-public class SFCALstandardutil {
+public class SFCALstandardParent {
 	static final String newfront  =  "DTEND:";
 	
 	

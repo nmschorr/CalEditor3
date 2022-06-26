@@ -29,7 +29,7 @@ import com.nmschorr.SFCAL_standard.SectionNew2;
  * 
  */
 
-public class SFCALstandard extends SFCALstandardutil {
+public class SFCALstandardMain extends SFCALstandardParent {
 	static int G_VERBOSE=0;
 	
 	 
