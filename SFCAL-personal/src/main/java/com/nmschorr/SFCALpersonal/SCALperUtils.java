@@ -1,4 +1,4 @@
-package com.nmschorr.SFCAL_personal;
+package com.nmschorr.SFCALpersonal;
 
 import static java.lang.System.out;
 import java.io.File;
@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 
-
-public class SFCALPersonalUtils {
+public class SCALperUtils {
 
 
 // new method: ----------------------------------------------------------------	
-	static void sectionTask(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
+	static void sectionTaskThree(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
 		int totInFileLines=0;
 		int totInfilesMinusNine=0;
 		int locLineCount=4;  // start at 5th line
@@ -104,7 +103,7 @@ public class SFCALPersonalUtils {
 			}  // while
 
 			FileUtils.writeLines(finalFILE, lastFILE_ARRAY, true);
-			SFCALPersonalParent.mySleep(1);
+			SCALpersMain.mySleep(1);
 			FileUtils.waitFor(finalFILE, 1);
 		}  // try  
 		catch (IOException e) {  	e.printStackTrace();	 }	// catch
