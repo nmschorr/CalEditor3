@@ -6,19 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 
-//import static com.nmschorr.SFCAL_standard.*;
-
-
-<<<<<<< HEAD
 public class SectionNew2 {
-=======
-public class SectionNew {
->>>>>>> 4f6fb19b686b0a6f17aa4443fddb9ac0ece0dad6
-
-
 
 // new method: ----------------------------------------------------------------	
 	static void sectionTask(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
@@ -117,7 +107,7 @@ public class SectionNew {
 			}  // while
 
 			FileUtils.writeLines(finalFILE, lastFILE_ARRAY, true);
-			SFCALstandardutil.mySleep(1);
+			SFCALstandardParent.mySleep(1);
 			FileUtils.waitFor(finalFILE, 1);
 		}  // try  
 		catch (IOException e) {  	e.printStackTrace();	 }	// catch
@@ -155,9 +145,7 @@ public class SectionNew {
 		concatline2 ="";
 		concatline3 ="";
 		concatline4 ="";
-
 		return longstaar;
-
 	}
 
 
@@ -178,20 +166,8 @@ public class SectionNew {
 // new method: ----------------------------------------------------------------
 	static boolean checkSUMMARYforToss(List<String> tinyList) {
 		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
-<<<<<<< HEAD
 		out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
 
-//		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
-//		{
-//			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!! tossing: "+ sl);		
-//			return false;  // toss
-//		}
-//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Moon enters")) )
-//		{
-//			out.println("==========    ===== !!!!! reg method Moon enters! ========== tossing: "+ sl);		
-//			return false;  // toss
-//		}
-		
 		
 		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
 			//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
@@ -199,14 +175,6 @@ public class SectionNew {
 			out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
 			return false;  // toss
 		}
-//
-//		else if ( (sl.contains("SUMMARY:Full")) || 
-//				( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
-//		{
-//			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
-//			return false;   //toss
-//		}
-=======
 		out.println("\n\n" +"   starting over in checkForTossouts. The string is:  " + sl );
 
 		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
@@ -231,7 +199,6 @@ public class SectionNew {
 			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
 			return false;   //toss
 		}
->>>>>>> 4f6fb19b686b0a6f17aa4443fddb9ac0ece0dad6
 		else  {
 			return true;
 		}

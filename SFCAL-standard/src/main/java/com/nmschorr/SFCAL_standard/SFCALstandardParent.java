@@ -4,15 +4,9 @@ package com.nmschorr.SFCAL_standard;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
 import org.apache.commons.io.FileUtils;
-//import org.apache.commons.lang.StringUtils;
-
-
 import org.apache.commons.lang.StringUtils;
-
 import static java.lang.System.out;
-//import static com.nmschorr.SFCAL_editor.SFCALeditor.verboseOut;
 import static com.nmschorr.SFCAL_standard.SFCALstandardMain.*;
 
 	
@@ -29,14 +23,12 @@ public class SFCALstandardParent {
 		String cLINEtwo = "";
 		String DEStr = "DESCRIPTION";
 		String theDTENDline="";
-		boolean tempboo = false;
 
 		G_VERBOSE = 1;
 		
 		try {
 			List<String> origFILEARRY  =   FileUtils.readLines(origFILE);
 			int arraySIZE  =  origFILEARRY.size();
-			int mockCT  =  0;
 			System.out.println("orig file size:  " +  arraySIZE   );			
 			System.out.println("----------------------------------%%%%%%%##### total lines: " +  origFILEARRY.size());
 			// get ics header lines in 1st-first four header lines of ics inFileName
@@ -100,7 +92,6 @@ public class SFCALstandardParent {
 						nwARRY.set(back_two_count, new_DTEND_line);
 						
 						nwARRY.add(cLINEtwo );
-//						mockCT++;  // add extra line to count for extra DTEND string created
 						lineCOUNT++;
 						}
 
@@ -110,8 +101,6 @@ public class SFCALstandardParent {
 						nwARRY.add(cLINE );
 					}
 				lineCOUNT++;
-				//if (lineCOUNT == 1899)
-				//	tempboo = true;
 				cLINEtwo ="";
 			}  // while lines in file arrray
 			System.out.println("Writing to file: " + SFCALtempONE.getName());
@@ -365,7 +354,3 @@ static HashMap<String, String>  makeNewhash() {
 			return myHashmap;
 		}
 }
-
-
-
- 	
