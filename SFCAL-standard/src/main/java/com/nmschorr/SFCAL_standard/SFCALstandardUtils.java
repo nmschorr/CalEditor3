@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 
-public class SectionNew2 {
+public class SFCALstandardUtils {
 
 // new method: ----------------------------------------------------------------	
-	static void sectionTask(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
+	static void sectionTaskTwo(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
 		int totInFileLines=0;
 		int totInfilesMinusNine=0;
 		int locLineCount=4;  // start at 5th line
@@ -204,8 +204,3 @@ public class SectionNew2 {
 		}
 	} // method end
 }  // class
-
-//else if ( (sl.contains("void of")) || (sl.contains("SUMMARY:Full")) || 
-//		( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
-//{
-

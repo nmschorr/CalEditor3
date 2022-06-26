@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.*;
 import static java.lang.System.out;
 import org.apache.commons.io.FileUtils;
-import com.nmschorr.SFCAL_standard.SectionNew2;
 
 /**
  * This class contains methods that remove extra calendar events from an ics calendar file.
@@ -31,7 +30,6 @@ import com.nmschorr.SFCAL_standard.SectionNew2;
 
 public class SFCALstandardMain extends SFCALstandardParent {
 	static int G_VERBOSE=0;
-	
 	 
 	public static void main(String[] args) {	
 		String indirMAIN = getindir();
@@ -56,7 +54,7 @@ public class SFCALstandardMain extends SFCALstandardParent {
 				
 			generalStringFixing( inFILEstr, tOUTone);
 			
-			SectionNew2.sectionTask(tOUTone, tOUTtwo, finFILEnmWdir);
+			SFCALstandardUtils.sectionTaskTwo(tOUTone, tOUTtwo, finFILEnmWdir);
 			
 			out.println("- datefilename is: " + finFILEnmWdir+"--------End of Loop------------NEW filename is: "+finFILEnmWdir);		
 			
@@ -93,8 +91,6 @@ public class SFCALstandardMain extends SFCALstandardParent {
 			out.println(theoutline);
 		}
 	}
-
-
 	
 // new method // --------------------------------------------------------------	 	
 	static String fixDESCRIPTION_line( String  inSTRING) {
@@ -132,9 +128,6 @@ public class SFCALstandardMain extends SFCALstandardParent {
 		} //for
 	return newstr;
 	}
-		
-		
-		
 		
 		
 	static String continueReplacing(String fixmeSTR) {
@@ -217,7 +210,6 @@ public class SFCALstandardMain extends SFCALstandardParent {
 	} // gofixhash
 	
 	
-	
 // new method // --------------------------------------------------------------	 	
 	static HashMap<String, String> makeSpellhm() {
 		HashMap <String, String> spellhm  =  new HashMap<String, String>();
@@ -233,7 +225,6 @@ public class SFCALstandardMain extends SFCALstandardParent {
 		spellhm.put("fantasise","fantasize");
 		return spellhm;
 	}
-
 
 	
 // new method // --------------------------------------------------------------	 	
@@ -270,6 +261,5 @@ public class SFCALstandardMain extends SFCALstandardParent {
 
 		return newDateNM; 
 	}
-
 }  // class
  

@@ -1,6 +1,5 @@
 package com.nmschorr.SFCAL_standard;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -13,7 +12,6 @@ import static com.nmschorr.SFCAL_standard.SFCALstandardMain.*;
 public class SFCALstandardParent {
 	static final String newfront  =  "DTEND:";
 	
-	
 	// new method // --------------------------------------------------------------	 		
 	static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {   
 		List<String> nwARRY  =  new ArrayList<String>();
@@ -23,7 +21,6 @@ public class SFCALstandardParent {
 		String cLINEtwo = "";
 		String DEStr = "DESCRIPTION";
 		String theDTENDline="";
-
 		G_VERBOSE = 1;
 		
 		try {
@@ -94,7 +91,6 @@ public class SFCALstandardParent {
 						nwARRY.add(cLINEtwo );
 						lineCOUNT++;
 						}
-
 					
 					else {
 						System.out.println("   writing ORIGINAL string to file         " + cLINE);
@@ -152,8 +148,6 @@ public class SFCALstandardParent {
 		}
 	return retroString;
 }
-	
-	
 	
 	// new method // --------------------------------------------------------------	 	
 	static String chkAddDTEND (String theLine) {
