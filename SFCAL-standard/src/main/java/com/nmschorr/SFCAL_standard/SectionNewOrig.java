@@ -12,11 +12,7 @@ import org.apache.commons.io.FileUtils;
 //import static com.nmschorr.SFCAL_standard.*;
 
 
-<<<<<<< HEAD
-public class SectionNew2 {
-=======
 public class SectionNew {
->>>>>>> 4f6fb19b686b0a6f17aa4443fddb9ac0ece0dad6
 
 
 
@@ -178,35 +174,6 @@ public class SectionNew {
 // new method: ----------------------------------------------------------------
 	static boolean checkSUMMARYforToss(List<String> tinyList) {
 		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
-<<<<<<< HEAD
-		out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
-
-//		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
-//		{
-//			out.println("==========    ===== !!!!! reg method FOUND ECLIPSE!! tossing: "+ sl);		
-//			return false;  // toss
-//		}
-//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Moon enters")) )
-//		{
-//			out.println("==========    ===== !!!!! reg method Moon enters! ========== tossing: "+ sl);		
-//			return false;  // toss
-//		}
-		
-		
-		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
-			//		else if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) )
-		{
-			out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
-			return false;  // toss
-		}
-//
-//		else if ( (sl.contains("SUMMARY:Full")) || 
-//				( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
-//		{
-//			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
-//			return false;   //toss
-//		}
-=======
 		out.println("\n\n" +"   starting over in checkForTossouts. The string is:  " + sl );
 
 		if ( (sl.contains("SUMMARY")) && (sl.contains("Eclipse")) )
@@ -225,20 +192,17 @@ public class SectionNew {
 			return false;  // toss
 		}
 
-		else if ( (sl.contains("SUMMARY:Full")) || 
+		else if ( (sl.contains("void of")) || (sl.contains("SUMMARY:Full")) || 
 				( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
 		{
 			out.println("==========    ===== !!!!! reg method FOUND ! tossing: "+ sl);		
 			return false;   //toss
 		}
->>>>>>> 4f6fb19b686b0a6f17aa4443fddb9ac0ece0dad6
 		else  {
 			return true;
 		}
 	} // method end
 }  // class
 
-//else if ( (sl.contains("void of")) || (sl.contains("SUMMARY:Full")) || 
-//		( sl.contains("SUMMARY:New Moon"))   )     // we are removing the quarters
-//{
+
 
