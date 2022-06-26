@@ -14,12 +14,10 @@ import static java.lang.System.out;
 import static com.nmschorr.SFCAL_personal.SFCALpersonal.*;
 
 	
-public class SFCALpersonalutil {
+public class SFCALPersonalParent {
 	static final String newfront  =  "DTEND:";
 	
-	
-	// new method // --------------------------------------------------------------	 		
-	static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {   
+		static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {   
 		List<String> nwARRY  =  new ArrayList<String>();
 		File origFILE = new File(origFILEnm);
 		File SFCALtempONE  =  new File(tmpFILEnmONE);
@@ -96,7 +94,6 @@ public class SFCALpersonalutil {
 						nwARRY.set(back_two_count, new_DTEND_line);
 						
 						nwARRY.add(cLINEtwo );
-//						mockCT++;  // add extra line to count for extra DTEND string created
 						lineCOUNT++;
 						}
 
@@ -106,8 +103,6 @@ public class SFCALpersonalutil {
 						nwARRY.add(cLINE );
 					}
 				lineCOUNT++;
-				//if (lineCOUNT == 1899)
-				//	tempboo = true;
 				cLINEtwo ="";
 			}  // while lines in file arrray
 			System.out.println("Writing to file: " + SFCALtempONE.getName());
@@ -266,22 +261,11 @@ static HashMap<String, String>  makeNewhash() {
 				else { KG = false; }
 
 				if ( ( theLocLine.contains("THISISATESTONLY")) 
-					//	( theLocLine.contains("TRANSPARENT")) 
-						///     ||
-					//	( theLocLine.contains("DTEND")) || 
-					//	( theLocLine.contains("VCALENDAR")) || 
-					//	( theLocLine.contains("VEVENT")) || 
-					//	( theLocLine.contains("DTSTART")) || 
-					//	( theLocLine.contains("PRODID:")) || 
-					//	( theLocLine.contains("VERSION:")) || 
-					//	( theLocLine.contains("METHOD:")) || ( theLocLine.contains("UID")) 
-					//	|| ( theLocLine.contains("CATEGORIES")) || ( theLocLine.contains("DTSTAMP")) 
 						)
 				{ 
 				 KG =false; 
 				}
 			}
-			//System.out.println ("val of KG is :" + KG);
 			return KG;
 		}
 		
