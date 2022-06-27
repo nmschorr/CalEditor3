@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 public class SCALperUtils {
 
+    static int G_VERBOSE=0;
 
 // new method: ----------------------------------------------------------------	
 	static void sectionTaskThree(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
@@ -16,7 +17,6 @@ public class SCALperUtils {
 		int totInfilesMinusNine=0;
 		int locLineCount=4;  // start at 5th line
 		String LINE_FEED = System.getProperty("line.separator");
-		File tmpFILtwo = new File(tFILEtwo);
 		File theREADING_FROM_TMP_FILE = new File(tFILEin);
 		File finalFILE = new File(finFILE);
 		System.out.println("tFILEin: " + tFILEin + " finFILE: " + finFILE + " tFILEtwo: " + tFILEtwo);
@@ -25,9 +25,6 @@ public class SCALperUtils {
 		try {
 			List<String> tempFILE_ARRAY =  FileUtils.readLines(theREADING_FROM_TMP_FILE);
 			totInFileLines = tempFILE_ARRAY.size();
-
-			System.out.println("!!! INSIDE sectiontask. total lines: " + totInFileLines +" " 
-					+ tmpFILtwo.getName() + "and lincount is : " + locLineCount);
 			// get ics header lines in 1st-first four header lines of ics inFileName
 
 			for (int i = 0; i < 4; i++)	{
@@ -67,7 +64,6 @@ public class SCALperUtils {
 
 			} //  // while locLineCount
 			lastFILE_ARRAY.add("END:VCALENDAR"+LINE_FEED);
-			// new code		
 			List<Integer> cntLONG = new ArrayList<Integer>();
 			String tline="";
 			String longstr ="";
@@ -81,7 +77,7 @@ public class SCALperUtils {
 				tline="";
 				longstr ="";				
 				tline = lastFILE_ARRAY.get(curLINEct);
-				out.println("curLINEct is --- "  + curLINEct +"arSIZE is --- "  + arSIZE);
+//				out.println("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
 
 				if (tline.contains("DESCRIPTION")) {
 					yesDESC = true;
@@ -97,7 +93,7 @@ public class SCALperUtils {
 				}
 				cntLONG.clear();
 				newARRAYSIZE=lastFILE_ARRAY.size();
-				out.println("new array size is: " + newARRAYSIZE);
+				out.println("curLINEct: " + curLINEct + " arSIZE: "  + arSIZE + " new array size: " + newARRAYSIZE);
 
 				curLINEct = curLINEct + 1;  //move the line counter up to the next group
 			}  // while
