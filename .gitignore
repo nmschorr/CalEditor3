@@ -13,3 +13,6 @@ SFCAL-personal/.settings/
 */.settings/
 */.settings
 
+/target/*
+target/*
+target/
