@@ -1,8 +1,8 @@
-package com.nmschorr.SFCALpersonal;
-
+package scp;
+// must be run with java -Dfile.encoding=UTF-8 SCALperson
+// otherwise doesn't work
 
 import static java.lang.System.out;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,23 +10,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import com.nmschorr.SFCALpersonal.*;
 
 
-public class SCALpersMain {
+public class SCALperson {
 	static final String newfront  =  "DTEND:";
 	static int G_VERBOSE = 1;
-
+    public static final char LF = '\n';
+    public static final char CR = '\r';
+    public static final String EMPTY = "";
+    
 	public static void main(String[] args) {
 		String indirMAIN = getindir();
 		String outDIR = getoutdir();
 		String outDIRTMP = outDIR + "\\tempfiles";
 		String[] arryOfInFiles = getflist(indirMAIN);	// create a list of names of those files
 		int fileInDirCNT=0;
-
 		int arraysize = arryOfInFiles.length;
 
 		while (fileInDirCNT < arraysize) {
@@ -43,63 +42,78 @@ public class SCALpersMain {
 
 			generalStringFixing( inFILEstr, tOUTone);
 
-			SCALperUtils.sectionTaskThree(tOUTone, tOUTtwo, finFILEnmWdir);
+			sectionTaskThree(tOUTone, tOUTtwo, finFILEnmWdir);
 
 			out.println("- datefilename is: " + finFILEnmWdir+"--------End of Loop------------NEW filename is: "+finFILEnmWdir);
-
 			fileInDirCNT++;
 		}
 		out.println("Finished Program");
 	}
 
-	// new method: ----------------------------------------------------------------
+    public static String chmp(String str) {
+        if (str.length() == 0) {
+            return str;
+        }
+
+        if (str.length() == 1) {
+            char ch = str.charAt(0);
+            if (ch == CR || ch == LF) {
+                return EMPTY;
+            }
+            return str;
+        }
+
+        int lastIdx = str.length() - 1;
+        char last = str.charAt(lastIdx);
+
+        if (last == LF) {
+            if (str.charAt(lastIdx - 1) == CR) {
+                lastIdx--;
+            }
+        } else if (last != CR) {
+            lastIdx++;
+        }
+        return str.substring(0, lastIdx);
+    }
+    
+    // new method: ----------------------------------------------------------------
 	static String getindir() {  // 1 for name, 2 for file
 		String iDIRNM = "C:\\tmp\\PERSONAL\\1solarf_out_personal";
-		return iDIRNM;
-		}
+		return iDIRNM;}
 
 	// new method: ----------------------------------------------------------------
 	static String getoutdir() {  // 1 for name, 2 for file
 		String oDIRNM =  "C:\\tmp\\PERSONAL\\2javaout_personal";
-		return oDIRNM;
-		}
+		return oDIRNM;}
 
 	static String getTMPnmWdir(String tnm, String myIn) {  // 1 for name, 2 for file
 		String sNAME = tnm + "\\SFCALtmp" + System.currentTimeMillis() +myIn +".ics";
-		return sNAME;
-		}
+		return sNAME;}
 
 	static String[] getflist(String dnm) {  // 1 for name, 2 for file
 		File filesDir = new File(dnm);  //READ the list of files in sfcalfiles/vds dir
  		String[] arryOfInFiles = filesDir.list();	// create a list of names of those files
- 		return arryOfInFiles;
-		}
+ 		return arryOfInFiles;}
 
 	public static void verboseOut(String theoutline) {
 		if (G_VERBOSE==1) {
 			out.println(theoutline);
-		}
-	}
-
+		}}
 
 
 // new method // --------------------------------------------------------------
 	static String fixDESCRIPTION_line( String  inSTRING) {
 		CharSequence badLINEFchars = "\\n";
 		String badLINEFstr = (String)badLINEFchars;
-		String newstr = "";
-//		out.println("just entered gofixDES. oldstrg is: " +inSTRING );
+		String newstr = "";  //		out.println("just entered gofixDES. oldstrg is: " +inSTRING );
 
 		String tString = inSTRING.replaceAll("%0A","");  // get rid of CRs  - \n
 		if (tString.contains(badLINEFchars))    // for newline only
 			newstr = tString.replace(badLINEFstr, " - ");
 		else newstr = tString;
-
 		tString = continueReplacing(newstr);
-
 		if (tString.startsWith(" "))   // spelling errors in extra lines of DESCRIPTION
 			tString = newrepl(tString);
-
 		return tString;
 	}
 
@@ -275,7 +289,7 @@ public class SCALpersMain {
 			while (lineCOUNT < arraySIZE) {
 				System.out.println("myLINEct:  " + lineCOUNT);
 				cLINE = origFILEARRY.get(lineCOUNT);
-				cLINEtwo  =   StringUtils.chomp(cLINE);  // chomp is removing the Z
+				cLINEtwo = chmp(cLINE);  // chomp is removing the Z
 				cLINE = chkForWeirdChar(cLINEtwo);
 //				System.out.println("    char string is:         " + cLINE);
 					// the if's start here
@@ -577,7 +591,157 @@ static HashMap<String, String>  makeNewhash() {
 			myHashmap.put("Pi", "Pisces ");
 			return myHashmap;
 		}
-}
+		
+		static void sectionTaskThree(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
+			int totInFileLines=0;
+			int totInfilesMinusNine=0;
+			int locLineCount=4;  // start at 5th line
+			String LINE_FEED = System.getProperty("line.separator");
+			File theREADING_FROM_TMP_FILE = new File(tFILEin);
+			File finalFILE = new File(finFILE);
+			System.out.println("tFILEin: " + tFILEin + " finFILE: " + finFILE + " tFILEtwo: " + tFILEtwo);
+			ArrayList<String> lastFILE_ARRAY = new ArrayList<String>();
 
+			try {
+				List<String> tempFILE_ARRAY =  FileUtils.readLines(theREADING_FROM_TMP_FILE);
+				totInFileLines = tempFILE_ARRAY.size();
+				// get ics header lines in 1st-first four header lines of ics inFileName
 
+				for (int i = 0; i < 4; i++)	{
+					lastFILE_ARRAY.add(tempFILE_ARRAY.get(i));
+				}
+				totInfilesMinusNine = totInFileLines-9;  //  
+				System.out.println("!!! totInfilesMinusNine: " + totInfilesMinusNine );
 
+				while ( locLineCount < totInfilesMinusNine )  
+				{                 // while there are still lines left in array // starting on 5th line, load
+					ArrayList<String> tinySectionList = new ArrayList<String>();
+					// first load sections of 10x lines each into smaller arrays  then check each section for voids etc  then correct
+
+					for (int tc=0; tc < 17; tc++) {         //tiny while
+						String theString = tempFILE_ARRAY.get(locLineCount);  //get one string
+						boolean checkforend = theString.startsWith("END:VEVENT", 0);
+						if (checkforend) {
+							tinySectionList.add(theString);
+							locLineCount++;
+							break;
+						}
+						if ( !checkforend) {
+							if (theString.contains("Stationary") &&  (theString.contains("DESCRIPTION") )	)
+									theString = theString + LINE_FEED;
+							tinySectionList.add(theString);
+							locLineCount++;
+						}
+					}  //for
+
+					boolean checkToKeep=true;
+					if (tinySectionList.size() > 6) 
+						checkToKeep = checkSUMMARYforToss(tinySectionList);	 // true is keep and write 
+
+					if (checkToKeep) {   // IF 	check for toss comes back TRUE, then write this section
+						lastFILE_ARRAY.addAll(tinySectionList);
+					}
+
+				} //  // while locLineCount
+				lastFILE_ARRAY.add("END:VCALENDAR"+LINE_FEED);
+				List<Integer> cntLONG = new ArrayList<Integer>();
+				String tline="";
+				String longstr ="";
+				int arSIZE = lastFILE_ARRAY.size();
+				int newARRAYSIZE=arSIZE;
+				int curLINEct = 0;
+				boolean yesDESC = false;
+
+				while ( curLINEct < newARRAYSIZE) {    // while we're still in the file
+					yesDESC = false;
+					tline="";
+					longstr ="";				
+					tline = lastFILE_ARRAY.get(curLINEct);
+//					out.println("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
+
+					if (tline.contains("DESCRIPTION")) {
+						yesDESC = true;
+						cntLONG.clear();
+						cntLONG.add(curLINEct);
+
+						longstr = concatDESC (tline, lastFILE_ARRAY, curLINEct, cntLONG);  
+						tline="";
+					}	// if DESCRIPTION
+
+					if (yesDESC) {
+						addmyLines (cntLONG, lastFILE_ARRAY, longstr);
+					}
+					cntLONG.clear();
+					newARRAYSIZE=lastFILE_ARRAY.size();
+					out.println("curLINEct: " + curLINEct + " arSIZE: "  + arSIZE + " new array size: " + newARRAYSIZE);
+
+					curLINEct = curLINEct + 1;  //move the line counter up to the next group
+				}  // while
+
+				FileUtils.writeLines(finalFILE, lastFILE_ARRAY, true);
+				SCALperson.mySleep(1);
+				FileUtils.waitFor(finalFILE, 1);
+			}  // try  
+			catch (IOException e) {  	e.printStackTrace();	 }	// catch
+		}  // end of method
+
+	// new method: ----------------------------------------------------------------	
+		static String concatDESC (String ttline, List<String> fileARY, int cLineCT, List<Integer> cLONG) {
+			String concatline1 ="";
+			String concatline2 ="";
+			String concatline3 ="";
+			String concatline4 ="";
+			String longstraa ="";
+			cLONG.add(cLineCT+1);
+
+			concatline1=fileARY.get(cLineCT+1);
+
+			if (fileARY.get(cLineCT+2).startsWith(" ")) {
+				concatline2=fileARY.get(cLineCT+2);
+				cLONG.add(cLineCT+2);
+
+				if (fileARY.get(cLineCT+3).startsWith(" ")) {
+					concatline3=fileARY.get(cLineCT+3);
+					cLONG.add(cLineCT+3);
+
+					if (fileARY.get(cLineCT+4).startsWith(" ")) {
+						concatline4=fileARY.get(cLineCT+4);
+						cLONG.add(cLineCT+4);
+					}  
+				}  
+			}  
+			String longstaar=longstraa.concat(ttline + concatline1 + concatline2 + concatline3 + concatline4);
+			out.println("longstring is : " +longstraa);
+			concatline1 ="";
+			concatline2 ="";
+			concatline3 ="";
+			concatline4 ="";
+
+			return longstaar;
+		}
+
+	// new method: ----------------------------------------------------------------	
+		static List<String> addmyLines (List<Integer> cntLONG, List<String> farray, String longstrg) {
+			int numberRemoved = cntLONG.size();  // should be around 3					
+			int ttInt=cntLONG.get(0);
+			for (int i=0; i < numberRemoved; i++) {
+				ttInt=cntLONG.get(0);
+				farray.remove(ttInt);  // remove little strings
+			}
+			int wheretoaddline = cntLONG.get(0);
+			farray.add(wheretoaddline, longstrg);  // add new long string back
+			return farray;
+		} 	
+
+	// new method: ----------------------------------------------------------------
+		static boolean checkSUMMARYforToss(List<String> tinyList) {
+			String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
+			out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
+			
+			if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) ) {
+				out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
+				return false;  // toss
+			}
+			else  { return true; }
+		} // method end
+	}  // class
