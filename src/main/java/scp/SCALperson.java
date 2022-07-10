@@ -14,27 +14,38 @@ import org.apache.commons.io.FileUtils;
 
 
 public class SCALperson {
-	static final String newfront  =  "DTEND:";
 	static int G_VERBOSE = 1;
-    public static final char LF = '\n';
-    public static final char CR = '\r';
-    public static final String EMPTY = "";
-    
+	static final String newfront  =  "DTEND:";
+	public static final Long UNXTSTMPlong = System.currentTimeMillis();
+	public static final String UNXTSTMP = UNXTSTMPlong.toString();
+	public static final String PERSONDIR = "\\"  + UNXTSTMP;
+
+	public static final char LF = '\n';
+	public static final char CR = '\r';
+	public static final String EMPTY = "";
+	public static final String TOPDIR =  "C:\\SFOUT";  // WHERE SF dumps files
+	public static final String STARTDIRTOP =  TOPDIR + "\\START";  // WHERE SF dumps files
+	public static final String DONEDIRTOP =  TOPDIR + "\\DONE";  // OLD FILES done
+	public static final String WORKDIRTOP =  TOPDIR + "\\WORK";  // OLD FILES done
+	public static final String OUTDIRTOP =  TOPDIR + "\\JAVAOUT";   // ready for next step
+
+	public static final String DONEDIRPERS = DONEDIRTOP + PERSONDIR;
+
+
 	public static void main(String[] args) {
-		String indirMAIN = getindir();
-		String outDIR = getoutdir();
-		String outDIRTMP = outDIR + "\\tempfiles";
-		String[] arryOfInFiles = getflist(indirMAIN);	// create a list of names of those files
+		makeDir(DONEDIRPERS);  //READ the list of files in sfcalfiles/vds dir
+		String outDIRTMP = WORKDIRTOP + "\\tempfiles";
+		String[] arryOfInFiles = getflist(STARTDIRTOP);	// create a list of names of those files
 		int fileInDirCNT=0;
 		int arraysize = arryOfInFiles.length;
 
 		while (fileInDirCNT < arraysize) {
 			String infileNM= arryOfInFiles[fileInDirCNT];
-			String inFILEstr = indirMAIN +"\\" + infileNM;
+			String inFILEstr = STARTDIRTOP + "\\" + infileNM;
 
 			out.println("-- starting over in main LOOP# " + fileInDirCNT+1 +" filename is: " + infileNM);
 
-			String finFILEnmWdir = mkDateFileNM(inFILEstr, infileNM, outDIR);
+			String finFILEnmWdir = mkDateFileNM(inFILEstr, infileNM, WORKDIRTOP);
 			delFiles(finFILEnmWdir);  // delete the inFileName we made last time
 
 			String tOUTone = getTMPnmWdir(outDIRTMP,"-one");
@@ -47,53 +58,89 @@ public class SCALperson {
 			out.println("- datefilename is: " + finFILEnmWdir+"--------End of Loop------------NEW filename is: "+finFILEnmWdir);
 			fileInDirCNT++;
 		}
+		copyDoneFiles();
 		out.println("Finished Program");
 	}
 
-    public static String chmp(String str) {
-        if (str.length() == 0) {
-            return str;
-        }
 
-        if (str.length() == 1) {
-            char ch = str.charAt(0);
-            if (ch == CR || ch == LF) {
-                return EMPTY;
-            }
-            return str;
-        }
+	public static void copyDoneFiles() {
+		String[] arryFiles = getflist(STARTDIRTOP);	// create a list of names of those files
+		int arraysize = arryFiles.length;
+		int fileCNT=0;
+		File doneDirPers = new File(DONEDIRPERS);
+		
+		while (fileCNT < arraysize) {
+			String infileNM= arryFiles[fileCNT];
+			String inFILEstr = STARTDIRTOP + "\\" + infileNM;
+			File oldfilef = new File(inFILEstr);
+			copyDoneFile(oldfilef, doneDirPers);
+			fileCNT++;
+		}
+		out.println("Finished copyDoneFiles");
+		return;
+	}
+	
+	
+	
+	public static void copyDoneFile(File FileObj, File DirObj) {
+			try {
+				FileUtils.copyFileToDirectory(FileObj, DirObj, true);     
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			out.println("Finished one copyDoneFile");
+			
+		}
+	
+	public static void makeDir(String fname) {
+		File newDir = new File(fname);  //READ the list of files in sfcalfiles/vds dir
+		try {
+			FileUtils.forceMkdir(newDir);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-        int lastIdx = str.length() - 1;
-        char last = str.charAt(lastIdx);
 
-        if (last == LF) {
-            if (str.charAt(lastIdx - 1) == CR) {
-                lastIdx--;
-            }
-        } else if (last != CR) {
-            lastIdx++;
-        }
-        return str.substring(0, lastIdx);
-    }
-    
-    // new method: ----------------------------------------------------------------
-	static String getindir() {  // 1 for name, 2 for file
-		String iDIRNM = "C:\\tmp\\PERSONAL\\1solarf_out_personal";
-		return iDIRNM;}
+
+
+	public static String chmp(String str) {
+		if (str.length() == 0) {
+			return str;
+		}
+
+		if (str.length() == 1) {
+			char ch = str.charAt(0);
+			if (ch == CR || ch == LF) {
+				return EMPTY;
+			}
+			return str;
+		}
+
+		int lastIdx = str.length() - 1;
+		char last = str.charAt(lastIdx);
+
+		if (last == LF) {
+			if (str.charAt(lastIdx - 1) == CR) {
+				lastIdx--;
+			}
+		} else if (last != CR) {
+			lastIdx++;
+		}
+		return str.substring(0, lastIdx);
+	}
 
 	// new method: ----------------------------------------------------------------
-	static String getoutdir() {  // 1 for name, 2 for file
-		String oDIRNM =  "C:\\tmp\\PERSONAL\\2javaout_personal";
-		return oDIRNM;}
-
 	static String getTMPnmWdir(String tnm, String myIn) {  // 1 for name, 2 for file
-		String sNAME = tnm + "\\SFCALtmp" + System.currentTimeMillis() +myIn +".ics";
+		String sNAME = tnm + "\\SFCALtmp" + UNXTSTMP + myIn + ".ics";
 		return sNAME;}
 
 	static String[] getflist(String dnm) {  // 1 for name, 2 for file
 		File filesDir = new File(dnm);  //READ the list of files in sfcalfiles/vds dir
- 		String[] arryOfInFiles = filesDir.list();	// create a list of names of those files
- 		return arryOfInFiles;}
+		String[] arryOfInFiles = filesDir.list();	// create a list of names of those files
+		return arryOfInFiles;}
 
 	public static void verboseOut(String theoutline) {
 		if (G_VERBOSE==1) {
@@ -101,7 +148,7 @@ public class SCALperson {
 		}}
 
 
-// new method // --------------------------------------------------------------
+	// new method // --------------------------------------------------------------
 	static String fixDESCRIPTION_line( String  inSTRING) {
 		CharSequence badLINEFchars = "\\n";
 		String badLINEFstr = (String)badLINEFchars;
@@ -125,13 +172,13 @@ public class SCALperson {
 		for (String key : hMAP.keySet()) {
 			oldVal= key;
 			newVal= hMAP.get(key);
-//			out.println("!!!----- value of hmap retrieval: " + oldVal + " " + newVal);
+			//			out.println("!!!----- value of hmap retrieval: " + oldVal + " " + newVal);
 			if (localSTR.contains(oldVal)) {
-			    newstr = localSTR.replace(oldVal, newVal);
+				newstr = localSTR.replace(oldVal, newVal);
 				out.println("SPELLING ERROR!!!! ----------replaced string with new string... now fixed: " + newstr);
 			}
 		} //for
-	return newstr;
+		return newstr;
 	}
 
 
@@ -148,16 +195,15 @@ public class SCALperson {
 	}
 
 
-// new method // --------------------------------------------------------------
+	// new method // --------------------------------------------------------------
 	static String fixSUMMARYsigns(String oldstrg, boolean isDIRorRET) {
 		Map<String, String> hm  =  makeNewhash();
 		String tstring = oldstrg.replace("SUMMARY: ", "SUMMARY:");
-
 		String newstr = "empty";
 		StringBuffer newbuf = new StringBuffer(tstring);
 
 		List<String> signsARRAY = (Arrays.asList("Ari", "Tau","Gem", "Can", "Leo",
-			"Vir", "Lib","Sco", "Sag", "Cap", "Aqu", "Pis"));
+				"Vir", "Lib","Sco", "Sag", "Cap", "Aqu", "Pis"));
 		boolean signmatch =false;
 		String firstthird = "";
 		String secondthird = "";
@@ -174,7 +220,7 @@ public class SCALperson {
 				signmatch = true;
 		}
 		out.println("in fixSUMMARYsigns. first:  " + firstthird+" 2nd  :  " + secondthird+" 3rd  :  " + lastthird);
-//begin third column
+		//begin third column
 		if (!isDIRorRET) {
 			String thirdrep = hm.get(lastthird);			int start = 22;
 			int end = 25;
@@ -182,7 +228,7 @@ public class SCALperson {
 			newbuf.insert(start,thirdrep);
 			out.println("found this in hash:  " + lastthird+"new buf is: " + newbuf);
 		}
-//begin second column
+		//begin second column
 		if  (!isDIRorRET) {
 			secondthird = tstring.substring(18,21);
 			String secondrep = hm.get(secondthird);
@@ -196,7 +242,7 @@ public class SCALperson {
 			}
 			out.println("value of signmatch:  " + signmatch+ "found this in hash:  " + secondrep+"new buf is: " + newbuf);
 		}
-// begin first column
+		// begin first column
 		if (isDIRorRET ) {
 			firstthird = tstring.substring(8,11);
 			String longsign = hm.get(firstthird);
@@ -216,7 +262,7 @@ public class SCALperson {
 	} // gofixhash
 
 
-// new method // --------------------------------------------------------------
+	// new method // --------------------------------------------------------------
 	static HashMap<String, String> makeSpellhm() {
 		HashMap <String, String> spellhm  =  new HashMap<>();
 		spellhm.put("Stabilise","Stabilize");
@@ -232,7 +278,7 @@ public class SCALperson {
 		return spellhm;
 	}
 
-// new method // --------------------------------------------------------------
+	// new method // --------------------------------------------------------------
 	static String mkDateFileNM(String oldFileWDir, String oldname, String newfiledir) {
 		List<String> oldfileAR = new ArrayList<>();
 		String newDateNM = "";
@@ -243,7 +289,6 @@ public class SCALperson {
 		int indColon = 0;
 		int tStart=0;
 		int tEnd=0;
-
 		try {
 			oldfileAR =  FileUtils.readLines(new File(oldFileWDir));  //READ the list of files in sfcalfiles/vds dir
 
@@ -253,20 +298,20 @@ public class SCALperson {
 					indColon = tmpSTR.indexOf(":");
 					tStart=indColon+1;
 					tEnd=tStart+8;
-
-			        newDateStr = tmpSTR.substring(tStart, tEnd);
-			        newDateNM = newfiledir + "\\" + oldname + "." + newDateStr + ".ics";
-			        break;
-			  }
-			  whileCT++;
+					newDateStr = tmpSTR.substring(tStart, tEnd);
+					newDateNM = newfiledir + "\\" + oldname + "." + newDateStr + ".ics";
+					break;
+				}
+				whileCT++;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	// catch
-
 		return newDateNM;
 	}
-		static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {
+
+
+	static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {
 		List<String> nwARRY  =  new ArrayList<>();
 		File origFILE = new File(origFILEnm);
 		File SFCALtempONE  =  new File(tmpFILEnmONE);
@@ -291,9 +336,9 @@ public class SCALperson {
 				cLINE = origFILEARRY.get(lineCOUNT);
 				cLINEtwo = chmp(cLINE);  // chomp is removing the Z
 				cLINE = chkForWeirdChar(cLINEtwo);
-//				System.out.println("    char string is:         " + cLINE);
-					// the if's start here
-					// begin the IFS
+				//				System.out.println("    char string is:         " + cLINE);
+				// the if's start here
+				// begin the IFS
 				if ( cLINE.contains(SUMstr)) {  /// if TR-Na only lines
 					cLINEtwo = fixSUMMARYsigns(cLINE, false) ;
 					nwARRY.add(cLINEtwo);
@@ -305,61 +350,61 @@ public class SCALperson {
 				}
 
 				else if ( cLINE.contains(DEStr) || cLINE.startsWith(" "))   {  /// if TR-NA only lines
-						cLINEtwo = fixDESCRIPTION_line(cLINE) ;
-						nwARRY.add(cLINEtwo);
-					}
-					else if (cLINE.startsWith("SUMMARY:Tr "))   { // direct or retrograde
-						cLINEtwo= fixDirRetro(cLINE);
-						cLINEtwo = fixSUMMARYsigns(cLINEtwo, true) ;
-						nwARRY.add(cLINEtwo );
-					}  // SUMMARY:TR
+					cLINEtwo = fixDESCRIPTION_line(cLINE) ;
+					nwARRY.add(cLINEtwo);
+				}
+				else if (cLINE.startsWith("SUMMARY:Tr "))   { // direct or retrograde
+					cLINEtwo= fixDirRetro(cLINE);
+					cLINEtwo = fixSUMMARYsigns(cLINEtwo, true) ;
+					nwARRY.add(cLINEtwo );
+				}  // SUMMARY:TR
 
 
-					else if ( (cLINE.contains(";VALUE")) && ( cLINE.contains("DT")) )  { // moon for the day
+				else if ( (cLINE.contains(";VALUE")) && ( cLINE.contains("DT")) )  { // moon for the day
+					nwARRY.add(cLINE );
+				}  // SUMMARY:TR
+
+				else if ( cLINE.contains("DTSTAR") ) {
+					if (!cLINE.contains("VALUE")) { //skip these; they are moon for the day
+						theDTENDline = chkAddDTEND(cLINE);
 						nwARRY.add(cLINE );
-					}  // SUMMARY:TR
-
-					else if ( cLINE.contains("DTSTAR") ) {
-						if (!cLINE.contains("VALUE")) { //skip these; they are moon for the day
-							theDTENDline = chkAddDTEND(cLINE);
-							nwARRY.add(cLINE );
-							nwARRY.add(theDTENDline );
-						}
+						nwARRY.add(theDTENDline );
 					}
-					else if (cLINE.contains("Moon goes void")) {
-						cLINEtwo = "SUMMARY:Moon void of course";
-						int newSIZE  =  nwARRY.size();
+				}
+				else if (cLINE.contains("Moon goes void")) {
+					cLINEtwo = "SUMMARY:Moon void of course";
+					int newSIZE  =  nwARRY.size();
 
-						int back_three_count = newSIZE - 5;
-						int back_two_count = newSIZE - 4;
-//						System.out.println("------here's back three----");
-						String back_3_str = nwARRY.get(back_three_count);
-						System.out.println("old string: " + back_3_str);
-						String newDTSTART = fixDTSTART(back_3_str);
-						String new_DTEND_line = stdUtilCreateDTEND(back_3_str);
+					int back_three_count = newSIZE - 5;
+					int back_two_count = newSIZE - 4;
+					//						System.out.println("------here's back three----");
+					String back_3_str = nwARRY.get(back_three_count);
+					System.out.println("old string: " + back_3_str);
+					String newDTSTART = fixDTSTART(back_3_str);
+					String new_DTEND_line = stdUtilCreateDTEND(back_3_str);
 
-						nwARRY.set(back_three_count, newDTSTART);
-						nwARRY.set(back_two_count, new_DTEND_line);
+					nwARRY.set(back_three_count, newDTSTART);
+					nwARRY.set(back_two_count, new_DTEND_line);
 
-						nwARRY.add(cLINEtwo );
-						lineCOUNT++;
-						}
+					nwARRY.add(cLINEtwo );
+					lineCOUNT++;
+				}
 
 
-					else {
-						System.out.println("   writing ORIGINAL string to file         " + cLINE);
-						nwARRY.add(cLINE );
-					}
+				else {
+					System.out.println("   writing ORIGINAL string to file         " + cLINE);
+					nwARRY.add(cLINE );
+				}
 				lineCOUNT++;
 				cLINEtwo ="";
 			}  // while lines in file arrray
 			System.out.println("Writing to file: " + SFCALtempONE.getName());
 			FileUtils.writeLines(SFCALtempONE, nwARRY);
-//			System.out.println("first end");
+			//			System.out.println("first end");
 		}  // try
-				catch (IOException e)  {
-					e.printStackTrace();
-					}  // catch
+		catch (IOException e)  {
+			e.printStackTrace();
+		}  // catch
 
 	}	// end of method
 
@@ -400,26 +445,26 @@ public class SCALperson {
 				retroString  = retStringTwo.replace(charD, " goes Direct");
 			}
 		}
-	return retroString;
-}
+		return retroString;
+	}
 
 	// new method // --------------------------------------------------------------
 	static String chkAddDTEND (String theLine) {
 		String newDTEND = theLine;
 		if ( theLine.contains("DTSTAR") )   {  // double check
 			if  ( !theLine.contains("VALUE")) { //moon for the  day
-			String newback = theLine.substring(8,23) + "Z";
-			out.println("                   !! inside chkAddDTEND -----                        @@@@@  the line is  " + theLine);
-			newDTEND = newfront + newback;
-			out.println("DTEND: new line is " + newDTEND);
+				String newback = theLine.substring(8,23) + "Z";
+				out.println("                   !! inside chkAddDTEND -----                        @@@@@  the line is  " + theLine);
+				newDTEND = newfront + newback;
+				out.println("DTEND: new line is " + newDTEND);
+			}
 		}
-	}
-	return newDTEND;
+		return newDTEND;
 	}
 
 
 	// new method // --------------------------------------------------------------
-static HashMap<String, String>  makeNewhash() {
+	static HashMap<String, String>  makeNewhash() {
 		HashMap <String, String> localHash  =  new HashMap<>();
 		localHash.put("Mon", "Moon");
 
@@ -452,7 +497,7 @@ static HashMap<String, String>  makeNewhash() {
 		localHash.put("Nep", "Neptune");
 		localHash.put("Ura", "Uranus");
 		localHash.put("Plu", "Pluto");
-	return localHash;
+		return localHash;
 	}
 
 
@@ -479,7 +524,7 @@ static HashMap<String, String>  makeNewhash() {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-	  } // mySleep
+	} // mySleep
 
 
 	// new method // --------------------------------------------------------------
@@ -491,257 +536,257 @@ static HashMap<String, String>  makeNewhash() {
 				String newStringy  =  checkLine.replace( "\uFFFD", " ");
 				System.out.println("The fixed line: " + newStringy);
 				return newStringy;
-				}
-			} catch (Exception e) {
-				System.out.println(e);
 			}
-		return checkLine;
+		} catch (Exception e) {
+			System.out.println(e);
 		}
+		return checkLine;
+	}
 
-	
+
 	// new method // --------------------------------------------------------------
 	static boolean checkLINEfunction(String theLocLine) {
-			boolean KG = true;
-			if   ((theLocLine.length() > 0 ) )   {
+		boolean KG = true;
+		if   ((theLocLine.length() > 0 ) )   {
 
-				if   ((theLocLine.length() > 0 ) )
-					{ KG  =  true; }
-				else { KG = false; }
+			if   ((theLocLine.length() > 0 ) )
+			{ KG  =  true; }
+			else { KG = false; }
 
-				if ( ( theLocLine.contains("THISISATESTONLY"))
-						)
-				{
-				 KG =false;
-				}
+			if ( ( theLocLine.contains("THISISATESTONLY"))
+					)
+			{
+				KG =false;
 			}
-			return KG;
 		}
+		return KG;
+	}
 
 	//----new Method ===============================================================//
-		static String replaceSigns(String theInputStr) {
-			String answerst =theInputStr;
-			String tsign = "";
-			String aspace = "";
-			String theMoon = "";
-			boolean theProblem = false;
-			verboseOut("inside replaceSigns");
-			HashMap <String, String> theHashmap = makemyhash();
+	static String replaceSigns(String theInputStr) {
+		String answerst =theInputStr;
+		String tsign = "";
+		String aspace = "";
+		String theMoon = "";
+		boolean theProblem = false;
+		verboseOut("inside replaceSigns");
+		HashMap <String, String> theHashmap = makemyhash();
 
-			String ShortSpace = theInputStr.substring(21,22);
-			if (ShortSpace.equals(" ")) {
-				 theProblem = true;
-			}
-
-			if (!theProblem) {     // continue as usual
-				aspace = theInputStr.substring(23,24);
-				if (aspace.equals(" ")) {
-					 tsign = theInputStr.substring(24,26);
-				}
-					 else tsign = theInputStr.substring(23,25);
-			}
-
-			if (theProblem) {     // scoot everything over one space
-
-				aspace = theInputStr.substring(22,23);
-				if (aspace.equals(" ")) {
-					 tsign = theInputStr.substring(23,25);
-				}
-					 else tsign = theInputStr.substring(22,24);
-			}
-
-			theMoon = theInputStr.substring(8,19);
-			if ((theMoon.contains("New Moon")) || (theMoon.contains("Full Moon")) ) {
-				answerst = theInputStr.replace(tsign, theHashmap.get(tsign));
-				}
-			else {
-				for (String key : theHashmap.keySet()) {       // check for other possibilities
-				   answerst = checkForSigns(theInputStr, key, theHashmap.get(key));
-					}
-				}
-			verboseOut("val of answerst is: " + answerst);
-			return answerst;
+		String ShortSpace = theInputStr.substring(21,22);
+		if (ShortSpace.equals(" ")) {
+			theProblem = true;
 		}
 
-		static String checkForSigns(String origLine, String theVal, String theRep) {
-			String theFixedLine = "";
-			verboseOut("inside checkForSigns checking val rep: "+theVal + theRep);
-			if (origLine.contains(theVal))  {
-				theFixedLine = origLine.replace( theVal, theRep);
-				out.println("---------FOUND sign CHAR ------------------The fixed line: " + theFixedLine);
-				return theFixedLine;
+		if (!theProblem) {     // continue as usual
+			aspace = theInputStr.substring(23,24);
+			if (aspace.equals(" ")) {
+				tsign = theInputStr.substring(24,26);
 			}
-			else return origLine;
+			else tsign = theInputStr.substring(23,25);
 		}
 
+		if (theProblem) {     // scoot everything over one space
 
-		// new method // --------------------------------------------------------------
-		static HashMap<String, String>  makemyhash() {
-			HashMap <String, String> myHashmap  =  new HashMap<>();
-			myHashmap.put("Cn", "Cancer ");
-			myHashmap.put("Ar", "Aries ");
-			myHashmap.put("Ta", "Taurus ");
-			myHashmap.put("Sg", "Sagittarius ");
-			myHashmap.put("Ge", "Gemini ");
-			myHashmap.put("Le", "Leo ");
-			myHashmap.put("Vi", "Virgo ");
-			myHashmap.put("Li", "Libra ");
-			myHashmap.put("Sc", "Scorpio ");
-			myHashmap.put("Cp", "Capricorn ");
-			myHashmap.put("Aq", "Aquarius ");
-			myHashmap.put("Pi", "Pisces ");
-			return myHashmap;
+			aspace = theInputStr.substring(22,23);
+			if (aspace.equals(" ")) {
+				tsign = theInputStr.substring(23,25);
+			}
+			else tsign = theInputStr.substring(22,24);
 		}
-		
-		static void sectionTaskThree(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
-			int totInFileLines=0;
-			int totInfilesMinusNine=0;
-			int locLineCount=4;  // start at 5th line
-			String LINE_FEED = System.getProperty("line.separator");
-			File theREADING_FROM_TMP_FILE = new File(tFILEin);
-			File finalFILE = new File(finFILE);
-			System.out.println("tFILEin: " + tFILEin + " finFILE: " + finFILE + " tFILEtwo: " + tFILEtwo);
-			ArrayList<String> lastFILE_ARRAY = new ArrayList<String>();
 
-			try {
-				List<String> tempFILE_ARRAY =  FileUtils.readLines(theREADING_FROM_TMP_FILE);
-				totInFileLines = tempFILE_ARRAY.size();
-				// get ics header lines in 1st-first four header lines of ics inFileName
+		theMoon = theInputStr.substring(8,19);
+		if ((theMoon.contains("New Moon")) || (theMoon.contains("Full Moon")) ) {
+			answerst = theInputStr.replace(tsign, theHashmap.get(tsign));
+		}
+		else {
+			for (String key : theHashmap.keySet()) {       // check for other possibilities
+				answerst = checkForSigns(theInputStr, key, theHashmap.get(key));
+			}
+		}
+		verboseOut("val of answerst is: " + answerst);
+		return answerst;
+	}
 
-				for (int i = 0; i < 4; i++)	{
-					lastFILE_ARRAY.add(tempFILE_ARRAY.get(i));
+	static String checkForSigns(String origLine, String theVal, String theRep) {
+		String theFixedLine = "";
+		verboseOut("inside checkForSigns checking val rep: "+theVal + theRep);
+		if (origLine.contains(theVal))  {
+			theFixedLine = origLine.replace( theVal, theRep);
+			out.println("---------FOUND sign CHAR ------------------The fixed line: " + theFixedLine);
+			return theFixedLine;
+		}
+		else return origLine;
+	}
+
+
+	// new method // --------------------------------------------------------------
+	static HashMap<String, String>  makemyhash() {
+		HashMap <String, String> myHashmap  =  new HashMap<>();
+		myHashmap.put("Cn", "Cancer ");
+		myHashmap.put("Ar", "Aries ");
+		myHashmap.put("Ta", "Taurus ");
+		myHashmap.put("Sg", "Sagittarius ");
+		myHashmap.put("Ge", "Gemini ");
+		myHashmap.put("Le", "Leo ");
+		myHashmap.put("Vi", "Virgo ");
+		myHashmap.put("Li", "Libra ");
+		myHashmap.put("Sc", "Scorpio ");
+		myHashmap.put("Cp", "Capricorn ");
+		myHashmap.put("Aq", "Aquarius ");
+		myHashmap.put("Pi", "Pisces ");
+		return myHashmap;
+	}
+
+	static void sectionTaskThree(String tFILEin, String tFILEtwo,  String finFILE) {   // this part was done by perl script
+		int totInFileLines=0;
+		int totInfilesMinusNine=0;
+		int locLineCount=4;  // start at 5th line
+		String LINE_FEED = System.getProperty("line.separator");
+		File theREADING_FROM_TMP_FILE = new File(tFILEin);
+		File finalFILE = new File(finFILE);
+		System.out.println("tFILEin: " + tFILEin + " finFILE: " + finFILE + " tFILEtwo: " + tFILEtwo);
+		ArrayList<String> lastFILE_ARRAY = new ArrayList<String>();
+
+		try {
+			List<String> tempFILE_ARRAY =  FileUtils.readLines(theREADING_FROM_TMP_FILE);
+			totInFileLines = tempFILE_ARRAY.size();
+			// get ics header lines in 1st-first four header lines of ics inFileName
+
+			for (int i = 0; i < 4; i++)	{
+				lastFILE_ARRAY.add(tempFILE_ARRAY.get(i));
+			}
+			totInfilesMinusNine = totInFileLines-9;  //  
+			System.out.println("!!! totInfilesMinusNine: " + totInfilesMinusNine );
+
+			while ( locLineCount < totInfilesMinusNine )  
+			{                 // while there are still lines left in array // starting on 5th line, load
+				ArrayList<String> tinySectionList = new ArrayList<String>();
+				// first load sections of 10x lines each into smaller arrays  then check each section for voids etc  then correct
+
+				for (int tc=0; tc < 17; tc++) {         //tiny while
+					String theString = tempFILE_ARRAY.get(locLineCount);  //get one string
+					boolean checkforend = theString.startsWith("END:VEVENT", 0);
+					if (checkforend) {
+						tinySectionList.add(theString);
+						locLineCount++;
+						break;
+					}
+					if ( !checkforend) {
+						if (theString.contains("Stationary") &&  (theString.contains("DESCRIPTION") )	)
+							theString = theString + LINE_FEED;
+						tinySectionList.add(theString);
+						locLineCount++;
+					}
+				}  //for
+
+				boolean checkToKeep=true;
+				if (tinySectionList.size() > 6) 
+					checkToKeep = checkSUMMARYforToss(tinySectionList);	 // true is keep and write 
+
+				if (checkToKeep) {   // IF 	check for toss comes back TRUE, then write this section
+					lastFILE_ARRAY.addAll(tinySectionList);
 				}
-				totInfilesMinusNine = totInFileLines-9;  //  
-				System.out.println("!!! totInfilesMinusNine: " + totInfilesMinusNine );
 
-				while ( locLineCount < totInfilesMinusNine )  
-				{                 // while there are still lines left in array // starting on 5th line, load
-					ArrayList<String> tinySectionList = new ArrayList<String>();
-					// first load sections of 10x lines each into smaller arrays  then check each section for voids etc  then correct
+			} //  // while locLineCount
+			lastFILE_ARRAY.add("END:VCALENDAR"+LINE_FEED);
+			List<Integer> cntLONG = new ArrayList<Integer>();
+			String tline="";
+			String longstr ="";
+			int arSIZE = lastFILE_ARRAY.size();
+			int newARRAYSIZE=arSIZE;
+			int curLINEct = 0;
+			boolean yesDESC = false;
 
-					for (int tc=0; tc < 17; tc++) {         //tiny while
-						String theString = tempFILE_ARRAY.get(locLineCount);  //get one string
-						boolean checkforend = theString.startsWith("END:VEVENT", 0);
-						if (checkforend) {
-							tinySectionList.add(theString);
-							locLineCount++;
-							break;
-						}
-						if ( !checkforend) {
-							if (theString.contains("Stationary") &&  (theString.contains("DESCRIPTION") )	)
-									theString = theString + LINE_FEED;
-							tinySectionList.add(theString);
-							locLineCount++;
-						}
-					}  //for
+			while ( curLINEct < newARRAYSIZE) {    // while we're still in the file
+				yesDESC = false;
+				tline="";
+				longstr ="";				
+				tline = lastFILE_ARRAY.get(curLINEct);
+				//					out.println("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
 
-					boolean checkToKeep=true;
-					if (tinySectionList.size() > 6) 
-						checkToKeep = checkSUMMARYforToss(tinySectionList);	 // true is keep and write 
-
-					if (checkToKeep) {   // IF 	check for toss comes back TRUE, then write this section
-						lastFILE_ARRAY.addAll(tinySectionList);
-					}
-
-				} //  // while locLineCount
-				lastFILE_ARRAY.add("END:VCALENDAR"+LINE_FEED);
-				List<Integer> cntLONG = new ArrayList<Integer>();
-				String tline="";
-				String longstr ="";
-				int arSIZE = lastFILE_ARRAY.size();
-				int newARRAYSIZE=arSIZE;
-				int curLINEct = 0;
-				boolean yesDESC = false;
-
-				while ( curLINEct < newARRAYSIZE) {    // while we're still in the file
-					yesDESC = false;
-					tline="";
-					longstr ="";				
-					tline = lastFILE_ARRAY.get(curLINEct);
-//					out.println("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
-
-					if (tline.contains("DESCRIPTION")) {
-						yesDESC = true;
-						cntLONG.clear();
-						cntLONG.add(curLINEct);
-
-						longstr = concatDESC (tline, lastFILE_ARRAY, curLINEct, cntLONG);  
-						tline="";
-					}	// if DESCRIPTION
-
-					if (yesDESC) {
-						addmyLines (cntLONG, lastFILE_ARRAY, longstr);
-					}
+				if (tline.contains("DESCRIPTION")) {
+					yesDESC = true;
 					cntLONG.clear();
-					newARRAYSIZE=lastFILE_ARRAY.size();
-					out.println("curLINEct: " + curLINEct + " arSIZE: "  + arSIZE + " new array size: " + newARRAYSIZE);
+					cntLONG.add(curLINEct);
 
-					curLINEct = curLINEct + 1;  //move the line counter up to the next group
-				}  // while
+					longstr = concatDESC (tline, lastFILE_ARRAY, curLINEct, cntLONG);  
+					tline="";
+				}	// if DESCRIPTION
 
-				FileUtils.writeLines(finalFILE, lastFILE_ARRAY, true);
-				SCALperson.mySleep(1);
-				FileUtils.waitFor(finalFILE, 1);
-			}  // try  
-			catch (IOException e) {  	e.printStackTrace();	 }	// catch
-		}  // end of method
+				if (yesDESC) {
+					addmyLines (cntLONG, lastFILE_ARRAY, longstr);
+				}
+				cntLONG.clear();
+				newARRAYSIZE=lastFILE_ARRAY.size();
+				out.println("curLINEct: " + curLINEct + " arSIZE: "  + arSIZE + " new array size: " + newARRAYSIZE);
+
+				curLINEct = curLINEct + 1;  //move the line counter up to the next group
+			}  // while
+
+			FileUtils.writeLines(finalFILE, lastFILE_ARRAY, true);
+			SCALperson.mySleep(1);
+			FileUtils.waitFor(finalFILE, 1);
+		}  // try  
+		catch (IOException e) {  	e.printStackTrace();	 }	// catch
+	}  // end of method
 
 	// new method: ----------------------------------------------------------------	
-		static String concatDESC (String ttline, List<String> fileARY, int cLineCT, List<Integer> cLONG) {
-			String concatline1 ="";
-			String concatline2 ="";
-			String concatline3 ="";
-			String concatline4 ="";
-			String longstraa ="";
-			cLONG.add(cLineCT+1);
+	static String concatDESC (String ttline, List<String> fileARY, int cLineCT, List<Integer> cLONG) {
+		String concatline1 ="";
+		String concatline2 ="";
+		String concatline3 ="";
+		String concatline4 ="";
+		String longstraa ="";
+		cLONG.add(cLineCT+1);
 
-			concatline1=fileARY.get(cLineCT+1);
+		concatline1=fileARY.get(cLineCT+1);
 
-			if (fileARY.get(cLineCT+2).startsWith(" ")) {
-				concatline2=fileARY.get(cLineCT+2);
-				cLONG.add(cLineCT+2);
+		if (fileARY.get(cLineCT+2).startsWith(" ")) {
+			concatline2=fileARY.get(cLineCT+2);
+			cLONG.add(cLineCT+2);
 
-				if (fileARY.get(cLineCT+3).startsWith(" ")) {
-					concatline3=fileARY.get(cLineCT+3);
-					cLONG.add(cLineCT+3);
+			if (fileARY.get(cLineCT+3).startsWith(" ")) {
+				concatline3=fileARY.get(cLineCT+3);
+				cLONG.add(cLineCT+3);
 
-					if (fileARY.get(cLineCT+4).startsWith(" ")) {
-						concatline4=fileARY.get(cLineCT+4);
-						cLONG.add(cLineCT+4);
-					}  
+				if (fileARY.get(cLineCT+4).startsWith(" ")) {
+					concatline4=fileARY.get(cLineCT+4);
+					cLONG.add(cLineCT+4);
 				}  
 			}  
-			String longstaar=longstraa.concat(ttline + concatline1 + concatline2 + concatline3 + concatline4);
-			out.println("longstring is : " +longstraa);
-			concatline1 ="";
-			concatline2 ="";
-			concatline3 ="";
-			concatline4 ="";
+		}  
+		String longstaar=longstraa.concat(ttline + concatline1 + concatline2 + concatline3 + concatline4);
+		out.println("longstring is : " +longstraa);
+		concatline1 ="";
+		concatline2 ="";
+		concatline3 ="";
+		concatline4 ="";
 
-			return longstaar;
-		}
+		return longstaar;
+	}
 
 	// new method: ----------------------------------------------------------------	
-		static List<String> addmyLines (List<Integer> cntLONG, List<String> farray, String longstrg) {
-			int numberRemoved = cntLONG.size();  // should be around 3					
-			int ttInt=cntLONG.get(0);
-			for (int i=0; i < numberRemoved; i++) {
-				ttInt=cntLONG.get(0);
-				farray.remove(ttInt);  // remove little strings
-			}
-			int wheretoaddline = cntLONG.get(0);
-			farray.add(wheretoaddline, longstrg);  // add new long string back
-			return farray;
-		} 	
+	static List<String> addmyLines (List<Integer> cntLONG, List<String> farray, String longstrg) {
+		int numberRemoved = cntLONG.size();  // should be around 3					
+		int ttInt=cntLONG.get(0);
+		for (int i=0; i < numberRemoved; i++) {
+			ttInt=cntLONG.get(0);
+			farray.remove(ttInt);  // remove little strings
+		}
+		int wheretoaddline = cntLONG.get(0);
+		farray.add(wheretoaddline, longstrg);  // add new long string back
+		return farray;
+	} 	
 
 	// new method: ----------------------------------------------------------------
-		static boolean checkSUMMARYforToss(List<String> tinyList) {
-			String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
-			out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
-			
-			if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) ) {
-				out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
-				return false;  // toss
-			}
-			else  { return true; }
-		} // method end
-	}  // class
+	static boolean checkSUMMARYforToss(List<String> tinyList) {
+		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
+		out.println("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
+
+		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) ) {
+			out.println("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
+			return false;  // toss
+		}
+		else  { return true; }
+	} // method end
+}  // class
