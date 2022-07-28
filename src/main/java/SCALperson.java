@@ -1,10 +1,17 @@
-package scp;
+//package scp;
 // must be run with java -Dfile.encoding=UTF-8 SCALperson
 // otherwise doesn't work
 
+// to run as simple class:  must recompile with the package name, use cmd (dos).  set up classpath in env vars.
+// use c:/scal  as main program dir.  It will use C:/SFOUT
+
+// use this in dos:  set CLASSPATH='C:/scal;.;C:/scal/commons-io/commons-io-2.1.jar;C:\Program Files\Java\jdk-11.0.12\lib\jrt-fs.jar;'
+// include the absolute naming of the c:/scal directory.
+
+
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,15 +28,18 @@ public class SCALperson {
 	public static final String EMPTYSTR = "";
 	public static final char LF = '\n';
 	public static final char CR = '\r';
-	public static Long SYSTIME = System.currentTimeMillis();
-	public static final String UNIXTSTAMP = SYSTIME.toString().substring(0, 11);
+	public static Long SYSTIME = currentTimeMillis();
+//	public static final String UNIXTSTAMP = SYSTIME.toString().substring(0, 11);
+	public static final String UNIXTSTAMP1 = SYSTIME.toString();
+	public static final String UNIXTSTAMP = UNIXTSTAMP1.substring(0, 11);
+
 	public static final char DASHY = '-';
 
 	public static void main(String[] args) {
 		final String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
 	    final String STARTDIR = TOPDIR + "\\START";  // WHERE SF dumps files
 		String[] arryOfInFiles = getflist(STARTDIR);	// create a list of names of those files
-		final String origTStamp = arryOfInFiles[0].substring(5, 17);
+		final String origTStamp = arryOfInFiles[0].substring(4, 17);
 		final String UNXTSTMP = origTStamp + DASHY + UNIXTSTAMP;
 
 		final String PERSONDIR = BKSLSH  + UNXTSTMP ;
@@ -143,7 +153,7 @@ public class SCALperson {
 
 	// new method: ----------------------------------------------------------------
 	static String getTMPnmWdir(String tnm, String myIn, String UNXTS) {  // 1 for name, 2 for file
-		String sNAME = tnm + "\\SFCALtmp" + UNXTS + myIn + ".ics";
+		String sNAME = tnm + "\\SCALtmp" + UNXTS + myIn + ".ics";
 		return sNAME;}
 
 	static String[] getflist(String dnm) {  // 1 for name, 2 for file
@@ -322,7 +332,7 @@ public class SCALperson {
 	static void generalStringFixing(String origFILEnm, String tmpFILEnmONE ) {
 		List<String> nwARRY = new ArrayList<>();
 		File origFILE = new File(origFILEnm);
-		File SFCALtempONE = new File(tmpFILEnmONE);
+		File SCALtempONE = new File(tmpFILEnmONE);
 		CharSequence SUMstr = "SUMMARY:Tr-Na";
 		String DEStr = "DESCRIPTION";
 //		String theDTENDline=EMPTYSTR;
@@ -400,8 +410,8 @@ public class SCALperson {
 				lineCOUNT++;
 				cLINEtwo = EMPTYSTR;
 			}  // while lines in file arrray
-			System.out.println("Writing to file: " + SFCALtempONE.getName());
-			FileUtils.writeLines(SFCALtempONE, nwARRY);
+			System.out.println("Writing to file: " + SCALtempONE.getName());
+			FileUtils.writeLines(SCALtempONE, nwARRY);
 			//			System.out.println("first end");
 		}  // try
 		catch (IOException e)  {
