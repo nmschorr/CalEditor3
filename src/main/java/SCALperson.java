@@ -1,13 +1,3 @@
-//package scp;
-// must be run with java -Dfile.encoding=UTF-8 SCALperson
-// otherwise doesn't work
-
-// to run as simple class:  must recompile with the package name, use cmd (dos).  set up classpath in env vars.
-// use c:/scal  as main program dir.  It will use C:/SFOUT
-
-// use this in dos:  set CLASSPATH='C:/scal;.;C:/scal/commons-io/commons-io-2.1.jar;C:\Program Files\Java\jdk-11.0.12\lib\jrt-fs.jar;'
-// include the absolute naming of the c:/scal directory.
-
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
@@ -39,7 +29,7 @@ public class SCALperson {
 		final String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
 	    final String STARTDIR = TOPDIR + "\\START";  // WHERE SF dumps files
 		String[] arryOfInFiles = getflist(STARTDIR);	// create a list of names of those files
-		final String origTStamp = arryOfInFiles[0].substring(4, 17);
+		final String origTStamp = arryOfInFiles[0].substring(3, 17);
 		final String UNXTSTMP = origTStamp + DASHY + UNIXTSTAMP;
 
 		final String PERSONDIR = BKSLSH  + UNXTSTMP ;
