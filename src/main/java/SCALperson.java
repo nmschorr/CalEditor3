@@ -13,20 +13,18 @@ import org.apache.commons.io.FileUtils;
 
 public class SCALperson {
 	public static final String BKSLSH = "\\";
-	static int G_VERBOSE = 1;
+	static int G_VERBOSE = 0;
 	static final String newfront = "DTEND:";
 	public static final String EMPTYSTR = "";
 	public static final char LF = '\n';
 	public static final char CR = '\r';
 	public static Long SYSTIME = currentTimeMillis();
-	public static final String UNIXTSTAMP = SYSTIME.toString().substring(2, 7);
+	public static final String UNIXTSTAMP = SYSTIME.toString().substring(3, 9);
 	public static String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
 	public static String START_DIR = TOPDIR + "\\START";  // WHERE SF dumps files
 	public static final char DASH = '-';
 	
 	public static void main(String[] args) {
-//		final String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
-//	    final String STARTDIR = TOPDIR + "\\START";  // WHERE SF dumps files
 		String[] arryOfInFiles = getflist(START_DIR);	// create a list of names of those files
 		String firstFileNme= arryOfInFiles[0];
 		int strLenBeforeExt= firstFileNme.length()- 4;
@@ -352,7 +350,7 @@ public class SCALperson {
 
 			// for each line in file:
 			while (lineCOUNT < arraySIZE) {
-				System.out.println("myLINEct:  " + lineCOUNT);
+				verboseOut("myLINEct:  " + lineCOUNT);
 				cLINE = origFILEARRY.get(lineCOUNT);
 				String cLINEtwo = chmp(cLINE);  // chomp is removing the Z
 				cLINE = chkForWeirdChar(cLINEtwo);
