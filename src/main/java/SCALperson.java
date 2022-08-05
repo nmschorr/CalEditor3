@@ -21,7 +21,7 @@ public class SCALperson {
 	public static Long SYSTIME = currentTimeMillis();
 //	public static final String UNIXTSTAMP = SYSTIME.toString().substring(0, 11);
 	public static final String UNIXTSTAMP1 = SYSTIME.toString();
-	public static final String UNIXTSTAMP = UNIXTSTAMP1.substring(0, 11);
+	public static final String UNIXTSTAMP = UNIXTSTAMP1.substring(0, 9);
 
 	public static final char DASHY = '-';
 
@@ -29,7 +29,11 @@ public class SCALperson {
 		final String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
 	    final String STARTDIR = TOPDIR + "\\START";  // WHERE SF dumps files
 		String[] arryOfInFiles = getflist(STARTDIR);	// create a list of names of those files
-		final String origTStamp = arryOfInFiles[0].substring(3, 17);
+		String firstfile = arryOfInFiles[0];
+		int firstlen = firstfile.length();
+		int endstr = firstlen - 4;
+		
+		final String origTStamp = arryOfInFiles[0].substring(3, endstr);
 		final String UNXTSTMP = origTStamp + DASHY + UNIXTSTAMP;
 
 		final String PERSONDIR = BKSLSH  + UNXTSTMP ;
@@ -231,7 +235,8 @@ public class SCALperson {
 		out.println("in fixSUMMARYsigns. first:  " + firstthird+" 2nd  :  " + secondthird+" 3rd  :  " + lastthird);
 		//begin third column
 		if (!isDIRorRET) {
-			String thirdrep = hm.get(lastthird);			int start = 22;
+			String thirdrep = hm.get(lastthird);			
+			int start = 22;
 			int end = 25;
 			newbuf.delete(start, end);
 			newbuf.insert(start,thirdrep);
