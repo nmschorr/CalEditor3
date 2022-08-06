@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 
 public class SCALperson {
 	public static final String BKSLSH = "\\";
-	static int G_VERBOSE = 0;
+	static int G_VERBOSE = 1;
 	static final String newfront = "DTEND:";
 	public static final String EMPTYSTR = "";
 	public static final char LF = '\n';
