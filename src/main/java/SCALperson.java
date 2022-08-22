@@ -23,6 +23,7 @@ public class SCALperson {
 	public static String TOPDIR = "C:\\SFOUT";  // WHERE SF dumps files
 	public static String START_DIR = TOPDIR + "\\START";  // WHERE SF dumps files
 	public static final char DASH = '-';
+	public static int outLineCt = 0;
 	
 	public static void main(String[] args) {
 		String[] arryOfInFiles = getflist(START_DIR);	// create a list of names of those files
@@ -172,6 +173,10 @@ public class SCALperson {
 		tString = continueReplacing(newstr);
 		if (tString.startsWith(" "))   // spelling errors in extra lines of DESCRIPTION
 			tString = newrepl(tString);
+		if (outLineCt > 195) {
+			out.println(inSTRING);
+
+		}
 		return tString;
 	}
 
@@ -200,6 +205,11 @@ public class SCALperson {
 		fixmeSTR = newTempStr.replace("Entering","Enters" );
 		String newTempStr1 = fixmeSTR.replace("DESCRIPTION:The ","DESCRIPTION:" );
 		newTempStr = newTempStr1.replace(" Radix "," " );
+		int tlen = newTempStr.length();
+		if (outLineCt > 200) {
+			if (tlen < 15) {
+				out.println("less than 15");
+		}}
 
 		verboseOut("new string... now fixed: " + newTempStr+ "value of instr:  " + fixmeSTR+ "return this new value  " + newTempStr);
 		return newTempStr;
@@ -351,6 +361,7 @@ public class SCALperson {
 			// for each line in file:
 			while (lineCOUNT < arraySIZE) {
 				verboseOut("myLINEct:  " + lineCOUNT);
+				outLineCt = lineCOUNT;
 				cLINE = origFILEARRY.get(lineCOUNT);
 				String cLINEtwo = chmp(cLINE);  // chomp is removing the Z
 				cLINE = chkForWeirdChar(cLINEtwo);
@@ -370,6 +381,10 @@ public class SCALperson {
 				else if ( cLINE.contains(DEStr) || cLINE.startsWith(" "))   {  /// if TR-NA only lines
 					cLINEtwo = fixDESCRIPTION_line(cLINE) ;
 					nwARRY.add(cLINEtwo);
+					if ( cLINE.contains(DEStr))   {  /// tests
+						out.println(DEStr);
+						out.println(lineCOUNT);
+					}
 				}
 				else if (cLINE.startsWith("SUMMARY:Tr "))   { // direct or retrograde
 					cLINEtwo= fixDirRetro(cLINE);
@@ -703,7 +718,7 @@ public class SCALperson {
 			boolean yesDESC = false;
 
 			while ( curLINEct < newARRAYSIZE) {    // while we're still in the file
-				verboseOut("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
+//				verboseOut("curLINEct:"  + curLINEct +" arSIZE: "  + arSIZE);
 				yesDESC = false;
 				tline = EMPTYSTR;
 				longstr = EMPTYSTR;				
@@ -777,12 +792,16 @@ public class SCALperson {
 	// new method: ----------------------------------------------------------------
 	static boolean checkSUMMARYforToss(List<String> tinyList) {
 		String sl = tinyList.get(6);  // checking the 6th line : SUMMARY
-		verboseOut("\n\n" +"   starting over in checkForTossouts. \nThe string is:  " + sl );
-
-		if ( (sl.contains("SUMMARY")) && (sl.contains("Quarter")) ) {
-			verboseOut("==========    ===== !!!!! reg method FOUND Quarter!!!  tossing: "+ sl);		
-			return false;  // toss
+		verboseOut("   starting over in checkForTossouts. \nThe string is:  " + sl );
+		if (sl.contains("SUMMARY"))  {
+			if ((sl.contains("Full")) || (sl.contains("New")) || (sl.contains("Quarter"))) {
+					verboseOut("========== !!!!! reg method FOUND Full-New-Quarter!!!  tossing: "+ sl);		
+					return false;  
+			}   // toss
+			else {  return true; }
 		}
-		else  { return true; }
+		else {
+			return true; 
+		}	
 	} // method end
 }  // class
