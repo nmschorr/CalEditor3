@@ -171,11 +171,8 @@ public class SCALperson {
 			newstr = tString.replace(badLINEFstr, " - ");
 		else newstr = tString;
 		tString = continueReplacing(newstr);
-		if (tString.startsWith(" "))   // spelling errors in extra lines of DESCRIPTION
+		if (tString.startsWith(" "))  {	 // spelling errors in extra lines of DESCRIPTION
 			tString = newrepl(tString);
-		if (outLineCt > 195) {
-			out.println(inSTRING);
-
 		}
 		return tString;
 	}
@@ -199,7 +196,7 @@ public class SCALperson {
 
 
 	static String continueReplacing(String fixmeSTR) {
-		String newTempStr = fixmeSTR.replace("Transiting ",EMPTYSTR );
+		String newTempStr = fixmeSTR.replace("Transiting ", EMPTYSTR );
 		fixmeSTR= newTempStr.replace("Conjunction","Conjunct");
 		newTempStr= fixmeSTR.replace("Opposition","Opposite");
 		fixmeSTR = newTempStr.replace("Entering","Enters" );
@@ -355,7 +352,7 @@ public class SCALperson {
 			int arraySIZE = origFILEARRY.size();
 			System.out.println("orig file size:  " +  arraySIZE + " ----------------------------------%%%%%%%##### total lines: " +  origFILEARRY.size());
 			// get ics header lines in 1st-first four header lines of ics inFileName
-			int lineCOUNT =0;
+			int lineCOUNT = 4;
 			String cLINE;
 
 			// for each line in file:
@@ -378,14 +375,45 @@ public class SCALperson {
 					nwARRY.add(cLINE );
 				}
 
-				else if ( cLINE.contains(DEStr) || cLINE.startsWith(" "))   {  /// if TR-NA only lines
-					cLINEtwo = fixDESCRIPTION_line(cLINE) ;
-					nwARRY.add(cLINEtwo);
-					if ( cLINE.contains(DEStr))   {  /// tests
-						out.println(DEStr);
-						out.println(lineCOUNT);
-					}
+//				else if ( cLINE.contains(DEStr) || cLINE.startsWith(" "))   {  /// if TR-NA only lines
+//					cLINEtwo = fixDESCRIPTION_line(cLINE) ;
+//					nwARRY.add(cLINEtwo);
+//					if ( cLINE.contains(DEStr))   {  /// tests
+//						out.println(DEStr);
+//						out.println(lineCOUNT);
+//					}
+//				}
+				
+				else if ( cLINE.contains(DEStr))   {  /// if TR-NA only lines
+					String cLINEnew1 = fixDESCRIPTION_line(cLINE);
+					lineCOUNT++;
+					int x = 1;
+					while (x < 15) {
+						String possibleContinue = origFILEARRY.get(lineCOUNT);
+						String cLINEnew2 = "";
+
+						if (possibleContinue.startsWith(" ")) {
+							String possibleContinue2 = fixDESCRIPTION_line(possibleContinue) ;
+							cLINEnew2 = cLINEnew1 + possibleContinue2;
+							x++;
+							lineCOUNT++;
+
+							cLINEnew1 = cLINEnew2;
+							}	
+						else {
+							x = 26;
+							lineCOUNT--;
+						}
+						}
+					String cLINEnew2 = cLINEnew1 + "\n";				
+					nwARRY.add(cLINEnew2);
 				}
+//					if ( cLINE.contains(DEStr))   {  /// tests
+//						out.println(DEStr);
+//						out.println(lineCOUNT);
+//						}
+//					}
+				
 				else if (cLINE.startsWith("SUMMARY:Tr "))   { // direct or retrograde
 					cLINEtwo= fixDirRetro(cLINE);
 					cLINEtwo = fixSUMMARYsigns(cLINEtwo, true) ;
