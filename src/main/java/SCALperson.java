@@ -47,7 +47,22 @@ public class SCALperson {
 	protected static final Map<String, String> makeSpellEntries = Map.ofEntries(entry("Stabilise","Stabilize"), 	
 		entry("Socialise","Socialize"), entry("Entering", ENTERS), entry("organised","organized"), 
 		entry("excelent","excellent"), entry("realise","realize"), entry("spiritualilty","spirituality"), entry("wilfull","willful"), 
-		entry("possibiities","possibilities"), entry("fantasise","fantasize"), entry("behaviour","behavior"), entry("Aint","Ain't"));
+		entry("possibiities","possibilities"), entry("fantasise","fantasize"), entry("behaviour","behavior"), entry("Aint","Ain't"),
+		entry("Strategize","possibilities"),
+		entry("Neighbourhood","Neighborhood"),
+		entry("recognise","recognise"),
+		entry("Organise","Organise"),
+		entry("socialise","socialise"),
+		entry("crystallised","crystalized"),		
+		entry("eadership","Leadership"),		
+		entry("self-fulfilment","self-fullfilment"),		
+		entry("wilful","willful"),		
+		entry("centre","center")	
+//		entry("xx","xx"),		
+//		entry("xx","xx"),		
+//		entry("xx","xx"),		
+//		entry("xx","xx")	
+				);
 	protected static final HashMap <String, String> makeSpellhm =  new HashMap<>(makeSpellEntries);
 
 	protected static final Map<String, String> signsEntryMap = Map.ofEntries(
@@ -227,65 +242,36 @@ public class SCALperson {
 			return fixmeSTR;     
 			}
 		
-	static String fixSUMMARYsigns(String oldstrg, boolean isDIRorRET) {				
+	static String fixSUMMARYsigns(String oldstrg) {				
 		String tstring = oldstrg.replace("SUMMARY: ", "SUMMARY:");
-		String newstr = "empty";
 		StringBuilder newbuf = new StringBuilder(tstring);
 
-		boolean signmatch =false;
-		String firstthird = EMPTYSTR;
-		String secondthird = EMPTYSTR;
-		String lastthird = EMPTYSTR;
-
-		if (!isDIRorRET) {
-			lastthird = tstring.substring(22,25);
-			firstthird = tstring.substring(14,17);
-			if (signsARRAY.contains(lastthird))
-				signmatch = true;
-		}
-		verboseOut("in fixSUMMARYsigns. first:  " + firstthird+" 2nd  :  " + secondthird+" 3rd  :  " + lastthird);
-		if (!isDIRorRET) {
-			String thirdrepp = planSignsAsp.get(lastthird);			
-			int start = 22;
-			int end = 25;
-			newbuf.delete(start, end);
-			newbuf.insert(start, thirdrepp);
-			String info_line3 = "found this in hash:  " + lastthird + "new buf is: " + newbuf;
-			verboseOut(info_line3);	
-		}
-		//begin second column
-		if  (!isDIRorRET) {
-			secondthird = tstring.substring(18,21);
-			String secondrep = planSignsAsp.get(secondthird);
-			int start = 18;
-			int end = 21;
-			newbuf.delete(start, end);
-			if (signmatch) {   // change Conjunct a sign to Enters a sign
-				newbuf.insert(start, ENTERS);
-			} else {
-				newbuf.insert(start, secondrep);
-			}
-			String info_line2 = "value of signmatch:  " + signmatch + "found this in hash:  " + secondrep + "new buf is: " + newbuf;
-			verboseOut(info_line2);	
-		}
-		// begin first column
-		if (isDIRorRET ) {
-			firstthird = tstring.substring(8,11);
-			String longsign = planSignsAsp.get(firstthird);
-			newstr = tstring.replace(firstthird, longsign);
-		}
-		if (!isDIRorRET ) {
-			String firstrep = planSignsAsp.get(firstthird);
-			int start = 8;
-			int end = 17;
-			newbuf.delete(start, end);
-			newbuf.insert(8,firstrep);
-			newstr = newbuf.toString();
-			String info_line = "found this in hash:  " + firstrep + "new buf is: " + newbuf + "    replaced string with new string... now fixed: " + newstr + " | " + " value of newstr:  " + newstr+ "return this new value  " + newstr;
-			verboseOut(info_line);		
-		}
-		return newstr;
-	} // gofixhash
+		String firstthird = tstring.substring(14,17);
+		String secondthird = tstring.substring(18,21);
+		String lastthird = tstring.substring(22,25);
+		int start = 22;
+		int end = 25;		
+		boolean signmatch = true ? signsARRAY.contains(lastthird) : false;
+		newbuf.delete(start, end);
+		newbuf.insert(start, planSignsAsp.get(lastthird));
+	
+	//begin second column
+		int starta = 18;
+		int enda = 21;
+		newbuf.delete(starta, enda);
+		String secondspot = signmatch ? ENTERS : planSignsAsp.get(secondthird);
+		newbuf.insert(start, secondspot);
+		verboseOut( "value of signmatch:  " + signmatch + " found this: " + planSignsAsp.get(secondthird) + " new buf: " + newbuf);	
+	
+		String firstrep = planSignsAsp.get(firstthird);
+		int startb = 8;
+		int endb = 17;
+		newbuf.delete(startb, endb);
+		newbuf.insert(8,firstrep);
+		verboseOut( "found this in hash:  " + firstrep + " new buf: " + newbuf.toString());		
+		return newbuf.toString();
+	}
+	 // gofixhash
 
 	// new method // --------------------------------------------------------------
 	static String mkDateFileNM(String oldFileWDir, String oldname, String newfiledir) {
@@ -335,7 +321,7 @@ public class SCALperson {
 				cLINE = chkForWeirdChar(cLINEtwo);
 
 				if ( cLINE.contains(SUMstr)) {  /// if TR-Na only lines
-					nwARRY.add(fixSUMMARYsigns(cLINE, false));
+					nwARRY.add(fixSUMMARYsigns(cLINE));
 				}
 				
 				else if ( cLINE.contains(DESC))   {  /// if TR-NA only lines
@@ -433,53 +419,47 @@ public class SCALperson {
 	}
 
 	// new method // --------------------------------------------------------------
-	static boolean checkLINEfunction(String theLocLine) {
-		boolean KG = true;
-		if   ((theLocLine.length() > 0 ) )   {
-
-			if   ((theLocLine.length() > 0 ) )
-			{ KG = true; }
-			else { KG = false; }
-
-			if ( ( theLocLine.contains("THISISATESTONLY"))
-					)
-			{
-				KG = false;
-			}
-		}
-		return KG;
-	}
+//	static boolean checkLINEfunction(String locLine) {
+//		boolean KG = true;
+////		if   ((locLine.length() > 0 ) )   {
+////
+////			if   ((theLocLine.length() > 0 ) )
+////			{ KG = true; }
+////			else { KG = false; }
+//
+//		KG = true ? locLine.length() > 0  : false;
+//		KG = false ? locLine.contains("THISISATESTONLY") : true;
+//			
+////			if ( ( theLocLine.contains("THISISATESTONLY")) )
+////			{
+////				KG = false;
+////			}
+//		
+//		return KG;
+//	}
 
 	//----new Method ===============================================================//
-	static String replaceSigns(String theInputStr) {
-		String answerst = theInputStr;
-		String tsign = EMPTYSTR;
-		boolean theProblem = false;
-		verboseOut("inside replaceSigns");
-
-		String shortSpace = theInputStr.substring(21,22);
-		if (shortSpace.equals(" ")) {
-			theProblem = true;
-		}
-
-		if (!theProblem) {     // continue as usual
-			String aspace = theInputStr.substring(23,24);
-			if (aspace.equals(" ")) {
-				tsign = theInputStr.substring(24,26);
-			}
-			else tsign = theInputStr.substring(23,25);
-		}
-
-		if (theProblem) {     // scoot everything over one space
-			if (theInputStr.substring(22,23).equals(" ")) {
-				tsign = theInputStr.substring(23,25); }
-			else tsign = theInputStr.substring(22,24);
-		}
+	static String replaceSigns(String locStr) {
+		String answerst = locStr;
+//				
+//		if (!locStr.substring(21,22).equals(" ")) {     // continue as usual
+//			int aCount = locStr.substring(23,24).equals(" ") ? 23 : 24;
+//			String tsign = locStr.substring(aCount, aCount+2);
+//		}
+//
+//		else {     // scoot everything over one space
+//			int aCount = locStr.substring(22,23).equals(" ") ? 23 : 22;
+//			String tsign = locStr.substring(aCount, aCount+2);
+//		}
+////			if (locStr.substring(22,23).equals(" ")) {
+////				tsign = locStr.substring(23,25); }
+////			else tsign = locStr.substring(22,24);
+////		}
 		
 		for (Entry entryPair2 : signsEntryMap.entrySet()) {       // check for other possibilities
 		    String key = entryPair2.getKey().toString();
 		    String val = entryPair2.getValue().toString(); 
-		    answerst = checkForSigns(theInputStr, key, val);
+		    answerst = checkForSigns(locStr, key, val);
 		}
 		
 		verboseOut("val of answerst is: " + answerst);
@@ -489,9 +469,7 @@ public class SCALperson {
 	static String checkForSigns(String origLine, String theVal, String theRep) {
 		verboseOut("inside checkForSigns checking val rep: "+theVal + theRep);
 		if (origLine.contains(theVal))  {
-			String theFixedLine = origLine.replace( theVal, theRep);
-			verboseOut("---------FOUND sign CHAR ------------------The fixed line: " + theFixedLine);
-			return theFixedLine;
+			return origLine.replace( theVal, theRep);
 		}
 		else return origLine;
 	}
