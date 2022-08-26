@@ -15,7 +15,7 @@ import static java.util.Map.entry;
 
 public class SCALperson {
 	public static final String BKSLSH = "\\";
-	protected static int G_VERBOSE = 1;
+	protected static int G_VERBOSE = 0;
 	protected static final String newfront = "DTEND:";
 	public static final String EMPTYSTR = "";
 	public static final char LF = '\n';
@@ -42,13 +42,14 @@ public class SCALperson {
 		entry("DESCRIPTION:The ","DESCRIPTION:" ), entry(" Radix "," " ));	
 	
 	protected static final List<String> DROPPHRASES = Arrays.asList( "Moon Sextile",
-        "Moon Trine", "Moon Opposite", "Moon Square", "Moon Quincunx", "Full", "New", 
+        "Moon Trine", "Moon Opposite", "Moon Square", "Moon Quincunx", "Full", "New Moon", 
         "Eclipse", "Partial", "Quarter ", "Lunar ", "Hybrid ", "Solar ", "Total ", "Annular ");
 
 	protected static final Map<String, String> makeSpellEntries = Map.ofEntries(entry("Stabilise","Stabilize"), 	
 		entry("Socialise","Socialize"), entry("Entering", ENTERS), entry("organised","organized"), 
 		entry("excelent","excellent"), entry("realise","realize"), entry("spiritualilty","spirituality"), entry("wilfull","willful"), 
-		entry("possibiities","possibilities"), entry("fantasise","fantasize"), entry("behaviour","behavior"), entry("Aint","Ain't"),
+		entry("possibiities","possibilities"), entry("fantasise","fantasize"), entry("behaviour","behavior"), 
+		entry("Aint","Ain't"),
 		entry("Strategize","possibilities"),
 		entry("Neighbourhood","Neighborhood"),
 		entry("recognise","recognise"),
@@ -192,24 +193,11 @@ public class SCALperson {
 	public static void verboseOut(String theoutline) {
 		if (G_VERBOSE==1) { out.println(theoutline);   }}
 		
-	static String fixDESCRIPTION_line(String inSTRING) {
-		CharSequence badLINEFchars = "\\n";
-		String newstr = EMPTYSTR;  			 
-
-		String tString = inSTRING.replaceAll("%0A", EMPTYSTR);  // get rid of CRs  - \n
-		if (tString.contains(badLINEFchars))    // for newline only
-			newstr = tString.replace((String)badLINEFchars, " - ");
-		else newstr = tString;
-		tString = continueReplacing(newstr);
-		if (tString.startsWith(" "))  {	 // spelling errors in extra lines of DESCRIPTION
-			tString = newrepl(tString);
-		}
-		return tString;     }
 
 	static String newrepl(String localSTR) {	
 		 for (Map.Entry<String, String> entryPair : makeSpellEntries.entrySet()){
-		    String oldVal = entryPair.getKey().toString();
-		    String newVal = entryPair.getValue().toString();    
+		    String oldVal = entryPair.getKey();
+		    String newVal = entryPair.getValue();    
 			if (localSTR.contains(oldVal)) {
 				localSTR = localSTR.replace(oldVal, newVal);
 			}
@@ -287,71 +275,79 @@ public class SCALperson {
 			List<String> origFILEARRY = FileUtils.readLines(origFILE);
 			out.println("orig file size:  " +  origFILEARRY.size() + " ----------------------------------%%%%%%%##### total lines: " +  origFILEARRY.size());
 			// get ics header lines in 1st-first four header lines of ics inFileName
-			int lineCOUNT = 4;
 			String cLINE;
-
+			String[] mynew;
+			
 			// for each line in file:
-			while (lineCOUNT < origFILEARRY.size()) {
-				verboseOut("myLINEct:  " + lineCOUNT);
-				outLineCt = lineCOUNT;
-				cLINE = origFILEARRY.get(lineCOUNT);
+			int linePosition = 4;
+			while (linePosition < origFILEARRY.size()) {
+				verboseOut("myLINEct:  " + linePosition);
+				outLineCt = linePosition;
+				cLINE = origFILEARRY.get(linePosition);
 				String cLINEtwo = chmp(cLINE);  // chomp is removing the Z
 				cLINE = chkForWeirdChar(cLINEtwo);
+				StringBuilder mainDescLineAllsb = new StringBuilder();
 
 				if ( cLINE.contains(SUMstr)) {  /// if TR-Na only lines
 					nwARRY.add(fixSUMMARYsigns(cLINE));
+					out.println(cLINE);
 				}
 				
 				else if ( cLINE.contains(DESC))   {  /// if TR-NA only lines
-					String cLINEnew1 = fixDESCRIPTION_line(cLINE);
-					lineCOUNT++;
+					String mainDescLineAll = fixDESCRIPTION_line(cLINE);
+					mainDescLineAllsb.append(mainDescLineAll);
+					linePosition++;
 					int x = 1;
-					while (x < 15) {
-						String possibleContinue = origFILEARRY.get(lineCOUNT);
-
-						if (possibleContinue.startsWith(" ")) {
-							String possibleContinue2 = fixDESCRIPTION_line(possibleContinue) ;
-							String cLINEnew2 = cLINEnew1 + possibleContinue2;
+					while ( x < 9) {
+						String possContinueText = origFILEARRY.get(linePosition);
+						 
+						if (possContinueText.startsWith(" ")) {
+							String possContinueTextFixed = fixDESCRIPTION_line(possContinueText) ;
+							mainDescLineAllsb.append(possContinueTextFixed);
+							linePosition++;
 							x++;
-							lineCOUNT++;
-							cLINEnew1 = cLINEnew2;
-							}	
+							}
 						else {
-							x = 26;
-							lineCOUNT--;
+							x = 10;
+							}
+					}
+					nwARRY.add(mainDescLineAllsb.toString());
+					out.println("!!!!------------------JUST ADDED: " + mainDescLineAllsb.toString());
+					} // for
+							
+				 
+				else if ( ( cLINE.contains("DTSTAR") ) && (!cLINE.contains("VALUE")) )  {
+					nwARRY.add(cLINE );
+					out.println("adding: " + cLINE);
+					nwARRY.add(chkAddDTEND(cLINE) );   //skip these; they are moon for the day
+					out.println("adding: " + cLINE);
 						}
-						}
-//					nwARRY.add(cLINEnew1 + LF);
-					nwARRY.add(cLINEnew1);
-			}
-//				else if ( ( cLINE.contains("DTSTAR") ) && (!cLINE.contains("VALUE")) )  {
-//						nwARRY.add(cLINE );
-//						nwARRY.add(chkAddDTEND(cLINE) );   //skip these; they are moon for the day
-//
-//					}
 				else {
 					verboseOut("   writing ORIGINAL string to file         " + cLINE);
 					nwARRY.add(cLINE );
+					out.println("adding: " + cLINE);
 				}
-				lineCOUNT++;
-				cLINEtwo = EMPTYSTR;
-			}  // while lines in file arrray
-			verboseOut("Writing to file: " + SCALtempONE.getName());
 			
+			linePosition++;
+			cLINEtwo = EMPTYSTR;	
+			
+			}  // while
+
+			verboseOut("Writing to file: " + SCALtempONE.getName());
 			FileUtils.writeLines(SCALtempONE, nwARRY);
 		}  // try
 		catch (IOException e)  {
 			e.printStackTrace();   }
 		}	// end of method
 
-//	static String chkAddDTEND (String theLine) {
-//		if (( theLine.contains("DTSTAR")) && ( !theLine.contains("VALUE")) ) { //moon for the  day
-//				String newback = theLine.substring(8,23) + "Z";
-//				verboseOut("   !! inside chkAddDTEND --   @@@@@  the line is  " + theLine);
-//				return newfront + newback;
-//			}
-//		return theLine;
-//	}
+	static String chkAddDTEND (String theLine) {
+		if (( theLine.contains("DTSTAR")) && ( !theLine.contains("VALUE")) ) { //moon for the  day
+				String newback = theLine.substring(8,23) + "Z";
+				verboseOut("   !! inside chkAddDTEND --   @@@@@  the line is  " + theLine);
+				return newfront + newback;
+			}
+		return theLine;
+	}
 
 	static String myREPLACE(String bigstr, String oldStr, String newStr) {		
 		if ( bigstr.contains(oldStr) ) {
@@ -401,17 +397,20 @@ public class SCALperson {
 	}
 
 	static void sectionTaskThree(String tFILEin, String finFILE) {   // this part was done by perl script
-		int totInFileLines = 0;
+		Map<String, String> jmap = new HashMap<>();
+
+		
 		int totInfilesMinusNine = 0;
 		int locLineCount = 4;  // start at 5th line
 		File theREADING_FROM_TMP_FILE = new File(tFILEin);
 		File finalFILE = new File(finFILE);
 		verboseOut("tFILEin: " + tFILEin + " finFILE: " + finFILE);
 		ArrayList<String> lastFILE_ARRAY = new ArrayList<String>();
+		ArrayList<String> jmap_list_arry = new ArrayList<String>();
 
 		try {
 			List<String> tempFILE_ARRAY = FileUtils.readLines(theREADING_FROM_TMP_FILE);
-			totInFileLines = tempFILE_ARRAY.size();
+			int totInFileLines = tempFILE_ARRAY.size();
 			// get ics header lines in 1st-first four header lines of ics inFileName
 
 			for (int i = 0; i < 4; i++)	{
@@ -445,6 +444,23 @@ public class SCALperson {
 
 				if (checkToKeep) {   // IF 	check for toss comes back TRUE, then write this section
 					lastFILE_ARRAY.addAll(tinySectionList);
+					
+					int sizea = tinySectionList.size();
+					
+					if (sizea > 0) {
+						String startstr = tinySectionList.get(0);
+						out.println("startstr: " + startstr);
+					}
+//					String endstr = tinySectionList.get(2);
+//					String summarystr = tinySectionList.get(2);
+//					String descriptionstr = tinySectionList.get(2);
+//
+//					jmap.put("start",startstr);
+//					jmap.put("end", endstr);
+//					jmap.put("summary", summarystr);		
+//					jmap.put("description", descriptionstr);
+					
+					totInFileLines = 0;
 				}
 
 			} 						//  // while locLineCount
@@ -482,21 +498,36 @@ public class SCALperson {
 	} 			 // end of method
 
 	// new method: ----------------------------------------------------------------	
-	static String concatDESC (String ttline, List<String> fileARY, int cLineCT, List<Integer> cLONG) {
-		String mainDescString = ttline;
-		int fileLinePosition = cLineCT;
-		
-		for (int myCounter = 1; myCounter < 4; myCounter++) {
-			fileLinePosition++;
-			String tempLine = fileARY.get(fileLinePosition);
-			if (tempLine.startsWith(" ")) {
-				mainDescString = mainDescString.concat(tempLine);
-			myCounter++;
-		}}
-		verboseOut("Description: " + mainDescString);
+	static String concatDESC (String mainDescString, List<String> fileARY, int cLineCT, List<Integer> cLONG) {
+//		int fileLinePosition = cLineCT;
+////		for (int myCounter = 1; myCounter < 4; myCounter++) {
+//
+//		for (int myCounter = 1; myCounter < 2; myCounter++) {
+//			fileLinePosition++;
+//			String tempLine = fileARY.get(fileLinePosition);
+//			if (tempLine.startsWith(" ")) {
+//				mainDescString = mainDescString.concat(tempLine);
+//			myCounter++;
+//		}}
+		verboseOut("This Description: " + mainDescString);
 		return mainDescString;
 	}
 
+	static String fixDESCRIPTION_line(String inSTRING) {
+		CharSequence badLINEFchars = "\\n";
+		String newstr = EMPTYSTR;  			 
+
+		String tString = inSTRING.replaceAll("%0A", EMPTYSTR);  // get rid of CRs  - \n
+		if (tString.contains(badLINEFchars))    // for newline only
+			newstr = tString.replace((String)badLINEFchars, " - ");
+		else newstr = tString;
+		tString = continueReplacing(newstr);
+		if (tString.startsWith(" "))  {	 // spelling errors in extra lines of DESCRIPTION
+			tString = newrepl(tString);
+		}
+		return tString;     }
+	
+	
 	// new method: ----------------------------------------------------------------	
 	static List<String> addmyLines (List<Integer> cntLONG, List<String> farray, String longstrg) {
 		for (int i=0; i < cntLONG.size(); i++) {     // should be around 3	
@@ -509,7 +540,7 @@ public class SCALperson {
 
 	// new method: ----------------------------------------------------------------
 	static boolean checkSUMMARYforToss(List<String> tinyList) {
-		String summaryLine = tinyList.get(6);  // checking the 6th line : SUMMARY
+		String summaryLine = tinyList.get(5);  // checking the 6th line : SUMMARY
 		verboseOut("   starting over in checkForTossouts. \nThe string is:  " + summaryLine );
 		
 		for (int indx=0; indx < DROPPHRASES.size(); indx++) {
